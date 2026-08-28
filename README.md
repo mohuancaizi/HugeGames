@@ -1,6 +1,8 @@
-# Arcade Hub
+# HugeGames
 
-A small Vue 3 + Fastify monorepo for a browser game collection.
+Pure games, tons of mini-games.
+
+A Vue 3 + Fastify monorepo for a browser game collection.
 
 ## Requirements
 
@@ -22,7 +24,7 @@ Start both apps with:
 npm run dev
 ```
 
-The game hall runs at `http://localhost:5173` and the API runs at `http://localhost:3000`.
+The portal runs at `http://localhost:5173/zh` and the API runs at `http://localhost:3000`.
 
 ## Verification
 
@@ -32,3 +34,4 @@ npm run build
 ```
 
 The server exposes `GET /api/health`, `GET /api/games`, and `GET /api/games/:slug`.
+The versioned portal API is available under `/api/v1`.
