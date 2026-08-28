@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="1200" height="900" fill="none"><defs>
+<linearGradient id="ink" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#132F38"/><stop offset=".55" stop-color="#09151C"/><stop offset="1" stop-color="#050A0F"/></linearGradient>
+<linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFF0AD"/><stop offset=".42" stop-color="#D39B42"/><stop offset="1" stop-color="#725020"/></linearGradient>
+<linearGradient id="jade" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#C1FFE5"/><stop offset=".43" stop-color="#36AFA0"/><stop offset="1" stop-color="#123D43"/></linearGradient>
+<linearGradient id="vermilion" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#F5B08C"/><stop offset=".48" stop-color="#A4473B"/><stop offset="1" stop-color="#371A23"/></linearGradient>
+<filter id="glow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="mist"><feTurbulence type="fractalNoise" baseFrequency=".015" numOctaves="3" result="n"/><feColorMatrix in="n" values="1 0 0 0 .2 0 1 0 0 .45 0 0 1 0 .45 0 0 0 .32 0"/></filter>
+<pattern id="paper" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M0 5h24M2 17h17" stroke="#C4A36C" stroke-opacity=".08"/><circle cx="6" cy="9" r=".7" fill="#F1D591" fill-opacity=".12"/></pattern>
+</defs>
+<rect width="1200" height="900" fill="url(#ink)"/><rect width="1200" height="900" fill="url(#paper)"/>
+<path d="M0 488 95 394l78 53 100-145 86 120 116-190 102 156 112-72 109 133 88-168 114 143 110-67 90 91v352H0V-147Z" fill="#143741" opacity=".76"/>
+<path d="M0 586 156 452l110 68 101-120 112 124 93-84 136 99 113-149 140 105 119-81 130 101v385H0Z" fill="#0B252C"/>
+<path d="M0 681c124-99 223-42 347-83 154-51 232-18 345-49 182-51 326 21 508-51v402H0Z" fill="#061015"/>
+<g filter="url(#mist)" opacity=".65"><path d="M-45 489c188-97 323 74 551 6 221-66 353-14 734-94v183c-242 62-416 38-624 82-235 50-429-82-661 8V489Z" fill="#A2D7C8"/><path d="M-50 671c216-65 300 67 545 5 216-54 456 49 755-30v122H-50Z" fill="#A3C4BF"/></g>
+<g fill="#E7C96B" opacity=".7"><path d="m168 411 8-31 8 31-8 12-8-12Zm781-47 7-27 7 27-7 10-7-10Zm-428 95 6-22 6 22-6 9-6-9Z"/></g>
+<path d="M58 230c96-66 172-78 262-55M830 173c111-27 199-2 307 82" stroke="#5BB09D" stroke-opacity=".22" stroke-width="2"/>
+</svg>

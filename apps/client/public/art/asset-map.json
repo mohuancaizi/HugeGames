@@ -1,0 +1,506 @@
+{
+  "version": "1.0",
+  "assets": [
+    {
+      "assetId": "HOME-BG-001",
+      "path": "美术/assets/backgrounds/bg-home-ink-mist.svg",
+      "format": "svg",
+      "intrinsicWidth": 1200,
+      "intrinsicHeight": 900,
+      "transparent": false,
+      "reusable": true,
+      "usedBy": [
+        "HomeDashboard",
+        "home-dashboard-390x844.svg"
+      ],
+      "purpose": "首页水墨山雾前中后景"
+    },
+    {
+      "assetId": "HOME-HERO-001",
+      "path": "美术/assets/hero/hero-ash-border.svg",
+      "format": "svg",
+      "intrinsicWidth": 760,
+      "intrinsicHeight": 420,
+      "transparent": false,
+      "reusable": false,
+      "usedBy": [
+        "MainQuestBanner",
+        "home-dashboard-390x844.svg"
+      ],
+      "purpose": "灰烬边境主线英雄石碑场景"
+    },
+    {
+      "assetId": "HOME-HERO-002",
+      "path": "美术/assets/hero/hero-chapter-seal.svg",
+      "format": "svg",
+      "intrinsicWidth": 160,
+      "intrinsicHeight": 190,
+      "transparent": true,
+      "reusable": false,
+      "usedBy": [
+        "MainQuestBanner",
+        "home-dashboard-390x844.svg"
+      ],
+      "purpose": "章节符印"
+    },
+    {
+      "assetId": "HOME-CARD-001",
+      "path": "美术/assets/characters/character-dawn-bastion.svg",
+      "format": "svg",
+      "intrinsicWidth": 360,
+      "intrinsicHeight": 520,
+      "transparent": false,
+      "reusable": true,
+      "usedBy": [
+        "CardPortrait",
+        "BattlePreviewView",
+        "home-dashboard-390x844.svg",
+        "battle-screen-390x844.svg"
+      ],
+      "purpose": "曙光壁垒角色立绘"
+    },
+    {
+      "assetId": "HOME-CARD-002",
+      "path": "美术/assets/characters/character-starstring-ranger.svg",
+      "format": "svg",
+      "intrinsicWidth": 360,
+      "intrinsicHeight": 520,
+      "transparent": false,
+      "reusable": true,
+      "usedBy": [
+        "CardPortrait",
+        "BattlePreviewView",
+        "home-dashboard-390x844.svg",
+        "battle-screen-390x844.svg"
+      ],
+      "purpose": "星弦射手角色立绘"
+    },
+    {
+      "assetId": "HOME-CARD-003",
+      "path": "美术/assets/characters/character-holy-priest.svg",
+      "format": "svg",
+      "intrinsicWidth": 360,
+      "intrinsicHeight": 520,
+      "transparent": false,
+      "reusable": true,
+      "usedBy": [
+        "CardPortrait",
+        "BattlePreviewView",
+        "home-dashboard-390x844.svg",
+        "battle-screen-390x844.svg"
+      ],
+      "purpose": "圣辉祭司角色立绘"
+    },
+    {
+      "assetId": "HOME-CARD-004",
+      "path": "美术/assets/characters/character-night-crow.svg",
+      "format": "svg",
+      "intrinsicWidth": 360,
+      "intrinsicHeight": 520,
+      "transparent": false,
+      "reusable": true,
+      "usedBy": [
+        "CardPortrait",
+        "BattlePreviewView",
+        "home-dashboard-390x844.svg",
+        "battle-screen-390x844.svg"
+      ],
+      "purpose": "暗鸦角色立绘"
+    },
+    {
+      "assetId": "HOME-FRAME-001",
+      "path": "美术/assets/cards/card-frame-gold.svg",
+      "format": "svg",
+      "intrinsicWidth": 360,
+      "intrinsicHeight": 520,
+      "transparent": true,
+      "reusable": true,
+      "usedBy": [
+        "CardPortrait",
+        "home-dashboard-390x844.svg"
+      ],
+      "purpose": "鎏金守护卡框"
+    },
+    {
+      "assetId": "HOME-FRAME-002",
+      "path": "美术/assets/cards/card-frame-teal.svg",
+      "format": "svg",
+      "intrinsicWidth": 360,
+      "intrinsicHeight": 520,
+      "transparent": true,
+      "reusable": true,
+      "usedBy": [
+        "CardPortrait",
+        "home-dashboard-390x844.svg"
+      ],
+      "purpose": "青玉远程卡框"
+    },
+    {
+      "assetId": "HOME-FRAME-003",
+      "path": "美术/assets/cards/card-frame-ice.svg",
+      "format": "svg",
+      "intrinsicWidth": 360,
+      "intrinsicHeight": 520,
+      "transparent": true,
+      "reusable": true,
+      "usedBy": [
+        "CardPortrait",
+        "home-dashboard-390x844.svg"
+      ],
+      "purpose": "冰青辅助卡框"
+    },
+    {
+      "assetId": "HOME-FRAME-004",
+      "path": "美术/assets/cards/card-frame-rose.svg",
+      "format": "svg",
+      "intrinsicWidth": 360,
+      "intrinsicHeight": 520,
+      "transparent": true,
+      "reusable": true,
+      "usedBy": [
+        "CardPortrait",
+        "home-dashboard-390x844.svg"
+      ],
+      "purpose": "暗朱刺客卡框"
+    },
+    {
+      "assetId": "HOME-REWARD-001",
+      "path": "美术/assets/icons/icon-idle-reward.svg",
+      "format": "svg",
+      "intrinsicWidth": 100,
+      "intrinsicHeight": 100,
+      "transparent": true,
+      "reusable": true,
+      "usedBy": [
+        "ClaimableRewardRow",
+        "home-dashboard-390x844.svg"
+      ],
+      "purpose": "挂机收益灵火"
+    },
+    {
+      "assetId": "HOME-NAV-001",
+      "path": "美术/assets/icons/icon-nav-home.svg",
+      "format": "svg",
+      "intrinsicWidth": 100,
+      "intrinsicHeight": 100,
+      "transparent": true,
+      "reusable": true,
+      "usedBy": [
+        "BottomNav",
+        "home-dashboard-390x844.svg"
+      ],
+      "purpose": "首页导航"
+    },
+    {
+      "assetId": "HOME-NAV-002",
+      "path": "美术/assets/icons/icon-nav-adventure.svg",
+      "format": "svg",
+      "intrinsicWidth": 100,
+      "intrinsicHeight": 100,
+      "transparent": true,
+      "reusable": true,
+      "usedBy": [
+        "BottomNav",
+        "QuickEntryGrid",
+        "home-dashboard-390x844.svg"
+      ],
+      "purpose": "冒险导航"
+    },
+    {
+      "assetId": "HOME-NAV-003",
+      "path": "美术/assets/icons/icon-nav-cards.svg",
+      "format": "svg",
+      "intrinsicWidth": 100,
+      "intrinsicHeight": 100,
+      "transparent": true,
+      "reusable": true,
+      "usedBy": [
+        "BottomNav",
+        "QuickEntryGrid",
+        "home-dashboard-390x844.svg"
+      ],
+      "purpose": "卡牌导航"
+    },
+    {
+      "assetId": "HOME-NAV-004",
+      "path": "美术/assets/icons/icon-nav-more.svg",
+      "format": "svg",
+      "intrinsicWidth": 100,
+      "intrinsicHeight": 100,
+      "transparent": true,
+      "reusable": true,
+      "usedBy": [
+        "BottomNav",
+        "QuickEntryGrid",
+        "home-dashboard-390x844.svg"
+      ],
+      "purpose": "更多/召唤任务导航"
+    },
+    {
+      "assetId": "HOME-UI-001",
+      "path": "美术/assets/icons/icon-resource-gold.svg",
+      "format": "svg",
+      "intrinsicWidth": 100,
+      "intrinsicHeight": 100,
+      "transparent": true,
+      "reusable": true,
+      "usedBy": [
+        "TopBarResourceSummary",
+        "home-dashboard-390x844.svg"
+      ],
+      "purpose": "金币资源"
+    },
+    {
+      "assetId": "HOME-UI-002",
+      "path": "美术/assets/icons/icon-resource-gem.svg",
+      "format": "svg",
+      "intrinsicWidth": 100,
+      "intrinsicHeight": 100,
+      "transparent": true,
+      "reusable": true,
+      "usedBy": [
+        "TopBarResourceSummary",
+        "home-dashboard-390x844.svg"
+      ],
+      "purpose": "宝石资源"
+    },
+    {
+      "assetId": "HOME-UI-003",
+      "path": "美术/assets/icons/icon-resource-energy.svg",
+      "format": "svg",
+      "intrinsicWidth": 100,
+      "intrinsicHeight": 100,
+      "transparent": true,
+      "reusable": true,
+      "usedBy": [
+        "TopBarResourceSummary",
+        "home-dashboard-390x844.svg"
+      ],
+      "purpose": "体力资源"
+    },
+    {
+      "assetId": "BATTLE-BG-001",
+      "path": "美术/assets/backgrounds/bg-battle-ruins.svg",
+      "format": "svg",
+      "intrinsicWidth": 1200,
+      "intrinsicHeight": 800,
+      "transparent": false,
+      "reusable": false,
+      "usedBy": [
+        "BattlePreviewView",
+        "battle-screen-390x844.svg"
+      ],
+      "purpose": "遗迹战场背景"
+    },
+    {
+      "assetId": "BATTLE-UI-001",
+      "path": "美术/assets/ui/battle-control-auto.svg",
+      "format": "svg",
+      "intrinsicWidth": 100,
+      "intrinsicHeight": 100,
+      "transparent": true,
+      "reusable": true,
+      "usedBy": [
+        "BattlePreviewView",
+        "battle-screen-390x844.svg"
+      ],
+      "purpose": "自动战斗控制"
+    },
+    {
+      "assetId": "BATTLE-UI-002",
+      "path": "美术/assets/ui/battle-control-speed.svg",
+      "format": "svg",
+      "intrinsicWidth": 100,
+      "intrinsicHeight": 100,
+      "transparent": true,
+      "reusable": true,
+      "usedBy": [
+        "BattlePreviewView",
+        "battle-screen-390x844.svg"
+      ],
+      "purpose": "速度控制"
+    },
+    {
+      "assetId": "BATTLE-UI-003",
+      "path": "美术/assets/ui/battle-control-pause.svg",
+      "format": "svg",
+      "intrinsicWidth": 100,
+      "intrinsicHeight": 100,
+      "transparent": true,
+      "reusable": true,
+      "usedBy": [
+        "BattlePreviewView",
+        "battle-screen-390x844.svg"
+      ],
+      "purpose": "暂停控制"
+    },
+    {
+      "assetId": "BATTLE-FX-001",
+      "path": "美术/assets/effects/fx-battle-slash.svg",
+      "format": "svg",
+      "intrinsicWidth": 100,
+      "intrinsicHeight": 100,
+      "transparent": true,
+      "reusable": true,
+      "usedBy": [
+        "BattlePreviewView",
+        "battle-screen-390x844.svg"
+      ],
+      "purpose": "灵火斩击"
+    },
+    {
+      "assetId": "BATTLE-FX-002",
+      "path": "美术/assets/effects/fx-battle-talisman.svg",
+      "format": "svg",
+      "intrinsicWidth": 100,
+      "intrinsicHeight": 100,
+      "transparent": true,
+      "reusable": true,
+      "usedBy": [
+        "BattlePreviewView",
+        "battle-screen-390x844.svg"
+      ],
+      "purpose": "符箓咒印"
+    },
+    {
+      "assetId": "BATTLE-FX-003",
+      "path": "美术/assets/effects/fx-battle-heal.svg",
+      "format": "svg",
+      "intrinsicWidth": 100,
+      "intrinsicHeight": 100,
+      "transparent": true,
+      "reusable": true,
+      "usedBy": [
+        "BattlePreviewView",
+        "battle-screen-390x844.svg"
+      ],
+      "purpose": "治疗灵火"
+    },
+    {
+      "assetId": "SUMMON-BG-001",
+      "path": "美术/assets/backgrounds/bg-summon-celestial-gate.svg",
+      "format": "svg",
+      "intrinsicWidth": 1200,
+      "intrinsicHeight": 900,
+      "transparent": false,
+      "reusable": false,
+      "usedBy": [
+        "SummonPreviewView",
+        "summon-screen-390x844.svg"
+      ],
+      "purpose": "天门召唤场景"
+    },
+    {
+      "assetId": "SUMMON-GATE-001",
+      "path": "美术/assets/effects/fx-summon-gate.svg",
+      "format": "svg",
+      "intrinsicWidth": 200,
+      "intrinsicHeight": 210,
+      "transparent": true,
+      "reusable": false,
+      "usedBy": [
+        "SummonPreviewView",
+        "summon-screen-390x844.svg"
+      ],
+      "purpose": "召唤门能量层"
+    },
+    {
+      "assetId": "SUMMON-RARE-001",
+      "path": "美术/assets/effects/fx-rarity-r.svg",
+      "format": "svg",
+      "intrinsicWidth": 100,
+      "intrinsicHeight": 100,
+      "transparent": true,
+      "reusable": true,
+      "usedBy": [
+        "SummonPreviewView",
+        "summon-screen-390x844.svg"
+      ],
+      "purpose": "R 稀有度光效"
+    },
+    {
+      "assetId": "SUMMON-RARE-002",
+      "path": "美术/assets/effects/fx-rarity-sr.svg",
+      "format": "svg",
+      "intrinsicWidth": 100,
+      "intrinsicHeight": 100,
+      "transparent": true,
+      "reusable": true,
+      "usedBy": [
+        "SummonPreviewView",
+        "summon-screen-390x844.svg"
+      ],
+      "purpose": "SR 稀有度光效"
+    },
+    {
+      "assetId": "SUMMON-RARE-003",
+      "path": "美术/assets/effects/fx-rarity-ssr.svg",
+      "format": "svg",
+      "intrinsicWidth": 100,
+      "intrinsicHeight": 100,
+      "transparent": true,
+      "reusable": true,
+      "usedBy": [
+        "SummonPreviewView",
+        "summon-screen-390x844.svg"
+      ],
+      "purpose": "SSR 稀有度光效"
+    },
+    {
+      "assetId": "SUMMON-UI-001",
+      "path": "美术/assets/ui/summon-button-single.svg",
+      "format": "svg",
+      "intrinsicWidth": 200,
+      "intrinsicHeight": 100,
+      "transparent": true,
+      "reusable": false,
+      "usedBy": [
+        "SummonPreviewView",
+        "summon-screen-390x844.svg"
+      ],
+      "purpose": "单次召唤按钮底图"
+    },
+    {
+      "assetId": "SUMMON-UI-002",
+      "path": "美术/assets/ui/summon-button-ten.svg",
+      "format": "svg",
+      "intrinsicWidth": 200,
+      "intrinsicHeight": 100,
+      "transparent": true,
+      "reusable": false,
+      "usedBy": [
+        "SummonPreviewView",
+        "summon-screen-390x844.svg"
+      ],
+      "purpose": "十连召唤按钮底图"
+    },
+    {
+      "assetId": "SUMMON-UI-003",
+      "path": "美术/assets/ui/summon-probability-mark.svg",
+      "format": "svg",
+      "intrinsicWidth": 100,
+      "intrinsicHeight": 100,
+      "transparent": true,
+      "reusable": true,
+      "usedBy": [
+        "SummonPreviewView",
+        "summon-screen-390x844.svg"
+      ],
+      "purpose": "概率说明图标"
+    },
+    {
+      "assetId": "SUMMON-RESULT-001",
+      "path": "美术/assets/cards/card-result-frame.svg",
+      "format": "svg",
+      "intrinsicWidth": 360,
+      "intrinsicHeight": 520,
+      "transparent": true,
+      "reusable": true,
+      "usedBy": [
+        "SummonPreviewView",
+        "summon-screen-390x844.svg"
+      ],
+      "purpose": "召唤结果卡框"
+    }
+  ]
+}

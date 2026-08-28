@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100" width="200" height="100" fill="none"><defs>
+<linearGradient id="ink" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#132F38"/><stop offset=".55" stop-color="#09151C"/><stop offset="1" stop-color="#050A0F"/></linearGradient>
+<linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFF0AD"/><stop offset=".42" stop-color="#D39B42"/><stop offset="1" stop-color="#725020"/></linearGradient>
+<linearGradient id="jade" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#C1FFE5"/><stop offset=".43" stop-color="#36AFA0"/><stop offset="1" stop-color="#123D43"/></linearGradient>
+<linearGradient id="vermilion" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#F5B08C"/><stop offset=".48" stop-color="#A4473B"/><stop offset="1" stop-color="#371A23"/></linearGradient>
+<filter id="glow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="mist"><feTurbulence type="fractalNoise" baseFrequency=".015" numOctaves="3" result="n"/><feColorMatrix in="n" values="1 0 0 0 .2 0 1 0 0 .45 0 0 1 0 .45 0 0 0 .32 0"/></filter>
+<pattern id="paper" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M0 5h24M2 17h17" stroke="#C4A36C" stroke-opacity=".08"/><circle cx="6" cy="9" r=".7" fill="#F1D591" fill-opacity=".12"/></pattern>
+</defs><path d='M8 17 27 4h146l19 13v66L173 96H27L8 83V17Z' fill='#5B3824' stroke='#E0B658' stroke-width='5'/><path d='M24 20h152M24 80h152' stroke='#FFF0A9' stroke-opacity='.38' stroke-width='2'/><path d='m35 50 12-12 12 12-12 12-12-12Z' fill='#FFE7A1'/></svg>

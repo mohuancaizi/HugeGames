@@ -1,0 +1,2 @@
+<script setup lang="ts">import SecondaryButton from "./SecondaryButton.vue"; defineProps<{ title?: string; description?: string }>(); const emit = defineEmits<{ retry: [] }>();</script>
+<template><div class="state-panel error-state" role="alert"><span class="state-icon">!</span><strong>{{ title ?? "暂时无法同步" }}</strong><p>{{ description ?? "保留已缓存内容，请稍后重试。" }}</p><SecondaryButton @click="emit('retry')">重试</SecondaryButton></div></template>

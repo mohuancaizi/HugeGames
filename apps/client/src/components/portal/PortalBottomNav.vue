@@ -1,0 +1,1 @@
+<template><nav class="portal-bottom-nav" aria-label="移动端导航"><RouterLink to="/zh"><span>⌂</span>首页</RouterLink><RouterLink to="/zh/games"><span>▦</span>大厅</RouterLink><RouterLink to="/zh/search"><span>⌕</span>搜索</RouterLink><RouterLink to="/zh/favorites"><span>☆</span>收藏</RouterLink></nav></template>

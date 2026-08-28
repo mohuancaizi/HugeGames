@@ -1,0 +1,1 @@
+<script setup lang="ts">import { onMounted } from "vue"; import { useRouter } from "vue-router"; import GameCatalogPage from "./GameCatalogPage.vue"; const router = useRouter(); onMounted(() => { document.title = "热门游戏｜星屿游廊"; void router.replace({ path: "/zh/games", query: { sort: "popular" } }); });</script><template><GameCatalogPage /></template>

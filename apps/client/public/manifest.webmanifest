@@ -1,0 +1,12 @@
+{
+  "name": "Arcade Hub 冒险者大厅",
+  "short_name": "Arcade Hub",
+  "description": "移动端卡牌 RPG 游戏大厅",
+  "lang": "zh-CN",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d1018",
+  "theme_color": "#0d1018",
+  "orientation": "portrait",
+  "icons": []
+}

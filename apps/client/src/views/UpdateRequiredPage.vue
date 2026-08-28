@@ -1,0 +1,2 @@
+<script setup lang="ts">import TopBar from "../components/TopBar.vue"; import SecondaryButton from "../components/SecondaryButton.vue";</script>
+<template><div class="p0-page"><TopBar title="需要更新" eyebrow="版本检查"/><main class="p0-content"><section class="state-panel error-state"><span class="state-icon">↻</span><h1>请更新应用</h1><p>当前版本无法继续使用此功能。更新不会在进行中的服务端事务期间强制刷新。</p><SecondaryButton @click="$router.push('/zh')">暂时返回首页</SecondaryButton></section></main></div></template>

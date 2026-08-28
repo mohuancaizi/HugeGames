@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 520" width="360" height="520" fill="none"><defs>
+<linearGradient id="ink" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#132F38"/><stop offset=".55" stop-color="#09151C"/><stop offset="1" stop-color="#050A0F"/></linearGradient>
+<linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFF0AD"/><stop offset=".42" stop-color="#D39B42"/><stop offset="1" stop-color="#725020"/></linearGradient>
+<linearGradient id="jade" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#C1FFE5"/><stop offset=".43" stop-color="#36AFA0"/><stop offset="1" stop-color="#123D43"/></linearGradient>
+<linearGradient id="vermilion" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#F5B08C"/><stop offset=".48" stop-color="#A4473B"/><stop offset="1" stop-color="#371A23"/></linearGradient>
+<filter id="glow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="mist"><feTurbulence type="fractalNoise" baseFrequency=".015" numOctaves="3" result="n"/><feColorMatrix in="n" values="1 0 0 0 .2 0 1 0 0 .45 0 0 1 0 .45 0 0 0 .32 0"/></filter>
+<pattern id="paper" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M0 5h24M2 17h17" stroke="#C4A36C" stroke-opacity=".08"/><circle cx="6" cy="9" r=".7" fill="#F1D591" fill-opacity=".12"/></pattern>
+</defs>
+<rect width="360" height="520" fill="#071016"/><path d="M0 435c58-69 113-50 172-102 57-50 111-26 188-102v289H0Z" fill="#5368A0" opacity=".48"/><circle cx="180" cy="184" r="119" fill="#F6F0B8" opacity=".14" filter="url(#glow)"/>
+<path d="M180 80c42 0 70 32 67 77l-7 64c-9 39-37 62-60 62s-51-23-60-62l-7-64c-3-45 25-77 67-77Z" fill="#B98468"/><path d="M105 164c-6-85 42-120 80-119 58 2 83 45 69 123-28-32-53-36-78-25-24 10-47 27-71 21Z" fill="#111B23"/>
+<path d="M75 452c3-109 39-172 105-183 66 11 102 74 105 183H75Z" fill="#5368A0" stroke="#C4ECF3" stroke-width="6"/><path d="M138 272 180 320l42-48 24 180H114l24-180Z" fill="#10212B" opacity=".74"/><path d="M180 316v130" stroke="#C4ECF3" stroke-width="6"/><path d="m118 348 62-34 62 34" stroke="#F6F0B8" stroke-opacity=".65" stroke-width="4"/>
+<path d="M298 95 226 354" stroke="#C4ECF3" stroke-width="17"/><path d="M298 95 226 354" stroke="#F6F0B8" stroke-width="4"/><path d="M314 76 286 116M281 104l34 13" stroke="#C4ECF3" stroke-width="7"/><path d="M72 399c40-45 64-47 97-21m119 21c-34-42-59-48-97-21" stroke="#F6F0B8" stroke-opacity=".55" stroke-width="7"/>
+<path d="M180 92v139M122 160h116m-92-44 68 88m0-88-68 88" stroke="#C4ECF3" stroke-opacity=".32" stroke-width="3"/><path d="M180 133c20 15 20 35 0 51-20-16-20-36 0-51Z" fill="#F6F0B8" opacity=".65"/>
+<rect x="16" y="16" width="72" height="28" fill="#071116" stroke="#C4ECF3"/><text x="52" y="35" fill="#F6F0B8" font-size="15" font-family="serif" text-anchor="middle">辅助</text><text x="180" y="484" fill="#F6F0B8" font-size="34" font-family="serif" text-anchor="middle">祈</text><text x="325" y="485" fill="#C4ECF3" font-size="20" font-family="serif" text-anchor="middle">杖</text><rect width="360" height="520" fill="url(#paper)"/>
+</svg>

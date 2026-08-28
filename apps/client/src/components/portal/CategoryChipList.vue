@@ -1,0 +1,2 @@
+<script setup lang="ts">import type { CategoryItem } from "@arcade/shared"; defineProps<{ categories: CategoryItem[] }>();</script>
+<template><div class="category-chip-list"><RouterLink v-for="category in categories" :key="category.slug" :to="`/zh/category/${category.slug}`" class="category-chip"><span class="category-chip-icon">{{ category.name.slice(0, 1) }}</span><span>{{ category.name }}</span></RouterLink></div></template>

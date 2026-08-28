@@ -1,0 +1,2 @@
+<script setup lang="ts">import type { PublishedGameSummary } from "@arcade/shared"; import GameCard from "./GameCard.vue"; defineProps<{ games: PublishedGameSummary[]; favorites?: string[] }>(); const emit = defineEmits<{ favorite: [slug: string]; play: [slug: string] }>();</script>
+<template><div class="portal-game-grid"><GameCard v-for="game in games" :key="game.slug" :game="game" :favorite="favorites?.includes(game.slug)" @favorite="emit('favorite', game.slug)" @play="emit('play', game.slug)" /></div></template>

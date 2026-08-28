@@ -1,0 +1,1 @@
+<script setup lang="ts">defineProps<{ disabled?: boolean }>(); const emit = defineEmits<{ launch: [] }>();</script><template><button class="portal-primary-button launch-button" type="button" :disabled="disabled" @click="emit('launch')">{{ disabled ? "暂不可启动" : "开始游戏" }} <span aria-hidden="true">↗</span></button></template>

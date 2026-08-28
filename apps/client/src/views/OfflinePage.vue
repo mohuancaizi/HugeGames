@@ -1,0 +1,2 @@
+<script setup lang="ts">import TopBar from "../components/TopBar.vue"; import SecondaryButton from "../components/SecondaryButton.vue";</script>
+<template><div class="p0-page"><TopBar title="离线模式" eyebrow="网络状态" back-to="/zh"/><main class="p0-content"><section class="state-panel"><span class="state-icon">⌁</span><h1>当前使用缓存</h1><p>可以查看最近同步的首页、章节、卡牌、任务和历史结果。战斗、召唤、升级与领取需要联网确认。</p><SecondaryButton to="/zh" @click="$router.push('/zh')">返回首页</SecondaryButton></section></main></div></template>

@@ -1,0 +1,14 @@
+{
+  "name": "arcade-hub",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace apps/server & npm run dev --workspace apps/client",
+    "typecheck": "npm run build --workspace packages/shared && npm run typecheck --workspace apps/server && npm run typecheck --workspace apps/client",
+    "build": "npm run build --workspace packages/shared && npm run build --workspace apps/server && npm run build --workspace apps/client"
+  }
+}

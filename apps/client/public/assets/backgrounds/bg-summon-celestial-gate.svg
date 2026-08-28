@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="1200" height="900" fill="none"><defs>
+<linearGradient id="ink" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#132F38"/><stop offset=".55" stop-color="#09151C"/><stop offset="1" stop-color="#050A0F"/></linearGradient>
+<linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#FFF0AD"/><stop offset=".42" stop-color="#D39B42"/><stop offset="1" stop-color="#725020"/></linearGradient>
+<linearGradient id="jade" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#C1FFE5"/><stop offset=".43" stop-color="#36AFA0"/><stop offset="1" stop-color="#123D43"/></linearGradient>
+<linearGradient id="vermilion" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#F5B08C"/><stop offset=".48" stop-color="#A4473B"/><stop offset="1" stop-color="#371A23"/></linearGradient>
+<filter id="glow"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+<filter id="mist"><feTurbulence type="fractalNoise" baseFrequency=".015" numOctaves="3" result="n"/><feColorMatrix in="n" values="1 0 0 0 .2 0 1 0 0 .45 0 0 1 0 .45 0 0 0 .32 0"/></filter>
+<pattern id="paper" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M0 5h24M2 17h17" stroke="#C4A36C" stroke-opacity=".08"/><circle cx="6" cy="9" r=".7" fill="#F1D591" fill-opacity=".12"/></pattern>
+</defs>
+<rect width="1200" height="900" fill="#080D1A"/><rect width="1200" height="900" fill="url(#paper)"/>
+<path d="M0 638 161 513l126 86 142-176 140 118 142-208 117 160 129-92 143 121 100-68v446H0Z" fill="#14233A"/>
+<path d="M0 709c241-116 389 1 607-76 202-71 365 24 593-79v346H0Z" fill="#050914"/>
+<g opacity=".8"><ellipse cx="600" cy="400" rx="235" ry="278" fill="#122B42" stroke="#E5C76A" stroke-width="6"/><ellipse cx="600" cy="400" rx="193" ry="241" stroke="#5DE1D3" stroke-opacity=".7" stroke-width="3"/><path d="M600 118v564M365 400h470M434 200l332 400m0-400-332 400" stroke="#6EE5D4" stroke-opacity=".28"/><path d="M520 650h160l-23-316H543l-23 316Z" fill="#08101E" stroke="#C99C46" stroke-width="4"/><path d="M451 660h298" stroke="#DAB257" stroke-width="9"/><path d="m453 660 40-80m254 80-40-80" stroke="#DAB257" stroke-width="7"/></g>
+<g filter="url(#glow)"><path d="M600 221c66 91 62 259 0 350-62-91-66-259 0-350Z" fill="#73E6D0" fill-opacity=".45"/><path d="M600 279c36 64 35 172 0 236-35-64-36-172 0-236Z" fill="#FFF0A8"/></g>
+<g fill="#D9BC66" opacity=".72"><circle cx="205" cy="263" r="3"/><circle cx="340" cy="141" r="4"/><circle cx="928" cy="226" r="3"/><circle cx="1010" cy="335" r="4"/><circle cx="154" cy="461" r="2"/></g>
+</svg>
