@@ -2,6 +2,8 @@ import { fileURLToPath, URL } from "node:url";
 import { defineConfig, type Plugin } from "vite";
 import vue from "@vitejs/plugin-vue";
 
+const base = process.env.VITE_DEPLOY_TARGET === "github-pages" ? "/HugeGamesRelease/" : "/";
+
 const legacyRedirects: Record<string, string> = {
   "/home": "/zh",
   "/games": "/zh/games",
@@ -28,6 +30,7 @@ function legacyRedirectPlugin(): Plugin {
 }
 
 export default defineConfig({
+  base,
   plugins: [vue(), legacyRedirectPlugin()],
   resolve: {
     alias: {

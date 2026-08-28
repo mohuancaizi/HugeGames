@@ -3,9 +3,10 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { RouterLink, useRoute } from "vue-router";
 import { rememberRecent } from "../services/portalStorage";
 import { kidsGameSlugs, kidsGameSpecs, type KidsGameMode } from "../data/kidsGameSpecs";
+import { funGameSlugs, funGameSpecs, type FunGameMode, type FunQuestion, type FunGameSpec } from "../data/funGameSpecs";
 
 type GameStatus = "idle" | "playing" | "paused" | "gameover";
-type GameSlug = "orbit-architect" | "wordsmith" | "pixel-punch" | "tiny-trails" | "last-light" | "color-switch" | "merge-2048" | "sky-hopper" | "garden-match" | "neon-memory" | "cannon-stack" | "fruit-slice" | "maze-escape" | "quick-tap" | "stack-tower" | "rocket-dodge" | "ring-runner" | "bubble-pop" | "number-chain" | "simon-grid" | "slide-puzzle" | "pipe-connect" | "sum-cross" | "meteor-guard" | "harbor-defense" | "shadow-hunt" | "laser-grid" | "drone-swarm" | "mini-farm" | "tower-balance" | "traffic-flow" | "island-builder" | "deep-dive" | "tap-rush" | "color-match" | "dont-touch-red" | "quick-draw" | "whack-mole" | "coin-catcher" | "target-range" | "button-memory" | "golf-putt" | "basket-shot" | "bowling-mini" | "fishing-cast" | "snowboard-dash" | "skate-line" | "paper-plane" | "odd-one-out" | "memory-pairs" | "lights-out" | "color-sort" | "word-scramble" | "math-blitz" | "pattern-lock" | "shape-fit" | "resource-route" | "market-merchant" | "campfire-keeper" | "colony-grid" | "flood-fill" | "bridge-builder" | "weather-planner" | (typeof kidsGameSlugs)[number];
+type GameSlug = "riddle-master" | "lantern-riddles" | "idiom-picture" | "brain-teaser" | "who-am-i" | "story-order" | "true-or-funny" | "word-riddle" | "orbit-architect" | "wordsmith" | "pixel-punch" | "tiny-trails" | "last-light" | "color-switch" | "merge-2048" | "sky-hopper" | "garden-match" | "neon-memory" | "cannon-stack" | "fruit-slice" | "maze-escape" | "quick-tap" | "stack-tower" | "rocket-dodge" | "ring-runner" | "bubble-pop" | "number-chain" | "simon-grid" | "slide-puzzle" | "pipe-connect" | "sum-cross" | "meteor-guard" | "harbor-defense" | "shadow-hunt" | "laser-grid" | "drone-swarm" | "mini-farm" | "tower-balance" | "traffic-flow" | "island-builder" | "deep-dive" | "tap-rush" | "color-match" | "dont-touch-red" | "quick-draw" | "whack-mole" | "coin-catcher" | "target-range" | "button-memory" | "golf-putt" | "basket-shot" | "bowling-mini" | "fishing-cast" | "snowboard-dash" | "skate-line" | "paper-plane" | "odd-one-out" | "memory-pairs" | "lights-out" | "color-sort" | "word-scramble" | "math-blitz" | "pattern-lock" | "shape-fit" | "resource-route" | "market-merchant" | "campfire-keeper" | "colony-grid" | "flood-fill" | "bridge-builder" | "weather-planner" | (typeof kidsGameSlugs)[number];
 
 type NewEntity = { id: number; x: number; y: number; value?: number; color?: string; hit?: boolean; kind?: string };
 type PipeCell = { id: number; rotation: number; shape: string };
@@ -27,7 +28,7 @@ type Enemy = { id: number; x: number; y: number; size: number; speed: number };
 const route = useRoute();
 const slug = computed(() => String(route.params.slug || route.name || ""));
 const kidsSpec = computed(() => kidsGameSpecs[slug.value]);
-const supportedSlugs: string[] = ["orbit-architect", "wordsmith", "pixel-punch", "tiny-trails", "last-light", "color-switch", "merge-2048", "sky-hopper", "garden-match", "neon-memory", "cannon-stack", "fruit-slice", "maze-escape", "quick-tap", "stack-tower", "rocket-dodge", "ring-runner", "bubble-pop", "number-chain", "simon-grid", "slide-puzzle", "pipe-connect", "sum-cross", "meteor-guard", "harbor-defense", "shadow-hunt", "laser-grid", "drone-swarm", "mini-farm", "tower-balance", "traffic-flow", "island-builder", "deep-dive", "tap-rush", "color-match", "dont-touch-red", "quick-draw", "whack-mole", "coin-catcher", "target-range", "button-memory", "golf-putt", "basket-shot", "bowling-mini", "fishing-cast", "snowboard-dash", "skate-line", "paper-plane", "odd-one-out", "memory-pairs", "lights-out", "color-sort", "word-scramble", "math-blitz", "pattern-lock", "shape-fit", "resource-route", "market-merchant", "campfire-keeper", "colony-grid", "flood-fill", "bridge-builder", "weather-planner", ...kidsGameSlugs];
+const supportedSlugs: string[] = [...funGameSlugs, "orbit-architect", "wordsmith", "pixel-punch", "tiny-trails", "last-light", "color-switch", "merge-2048", "sky-hopper", "garden-match", "neon-memory", "cannon-stack", "fruit-slice", "maze-escape", "quick-tap", "stack-tower", "rocket-dodge", "ring-runner", "bubble-pop", "number-chain", "simon-grid", "slide-puzzle", "pipe-connect", "sum-cross", "meteor-guard", "harbor-defense", "shadow-hunt", "laser-grid", "drone-swarm", "mini-farm", "tower-balance", "traffic-flow", "island-builder", "deep-dive", "tap-rush", "color-match", "dont-touch-red", "quick-draw", "whack-mole", "coin-catcher", "target-range", "button-memory", "golf-putt", "basket-shot", "bowling-mini", "fishing-cast", "snowboard-dash", "skate-line", "paper-plane", "odd-one-out", "memory-pairs", "lights-out", "color-sort", "word-scramble", "math-blitz", "pattern-lock", "shape-fit", "resource-route", "market-merchant", "campfire-keeper", "colony-grid", "flood-fill", "bridge-builder", "weather-planner", ...kidsGameSlugs];
 const configs: Record<string, { title: string; icon: string; description: string; instructions: string }> = {
   "orbit-architect": { title: "Orbit Architect", icon: "🪐", description: "让三颗行星保持在稳定轨道。", instructions: "点击轨道或使用 ← → 选择并调整轨道半径。三颗行星都在绿色稳定带内时持续得分。" },
   wordsmith: { title: "Wordsmith", icon: "🔤", description: "还原打乱的单词，保持连击。", instructions: "点击字母或用键盘输入，拼出正确单词。答错或超时会损失生命。" },
@@ -94,7 +95,7 @@ const configs: Record<string, { title: string; icon: string; description: string
   "weather-planner": { title: "Weather Planner", icon: "🌤️", description: "根据天气安排正确活动。", instructions: "观察天气图标，选择最合适的活动；连续规划三天即可成功。" },
 };
 const fallback = { title: "未知游戏", icon: "?", description: "这个游戏暂时不可用。", instructions: "返回大厅浏览其他游戏。" };
-const config = computed(() => kidsSpec.value ? { title: kidsSpec.value.title, icon: kidsSpec.value.icon, description: kidsSpec.value.prompt, instructions: "点击大按钮完成每一题；答对得分，答错会减少一颗爱心。" } : configs[slug.value as GameSlug] ?? fallback);
+const config = computed(() => funSpec.value ? { title: funSpec.value.title, icon: funSpec.value.icon, description: funSpec.value.prompt, instructions: funSpec.value.mode === "order" ? "点击相邻卡片交换位置，整理好后提交。答错会减少生命。" : "阅读题目并选择答案，答对有连击，答错会减少生命。" } : kidsSpec.value ? { title: kidsSpec.value.title, icon: kidsSpec.value.icon, description: kidsSpec.value.prompt, instructions: "点击大按钮完成每一题；答对得分，答错会减少一颗爱心。" } : configs[slug.value as GameSlug] ?? fallback);
 const isSupported = computed(() => supportedSlugs.includes(slug.value as GameSlug));
 const status = ref<GameStatus>("idle");
 const score = ref(0);
@@ -242,7 +243,21 @@ const kidsSequence = ref<number[]>([]);
 const kidsSequenceNext = ref(0);
 const kidsShowing = ref(false);
 const kidsBusy = ref(false);
+type FunGameState = {
+  spec: FunGameSpec;
+  question: FunQuestion;
+  questionIndex: number;
+  clueIndex: number;
+  orderItems: string[];
+  answered: boolean;
+  hintUsed: boolean;
+};
 
+const funSpec = computed(() => funGameSpecs[slug.value as (typeof funGameSlugs)[number]]);
+const funMode = computed<FunGameMode | undefined>(() => funSpec.value?.mode);
+const funGame = ref<FunGameState | null>(null);
+const funFeedback = ref("");
+const funHintVisible = ref(false);
 function startKidsRound(): void {
   const spec = kidsSpec.value;
   if (!spec) return;
@@ -305,6 +320,94 @@ function kidsPick(index: number): void {
   if (kidsRound.value >= 6) finishGame("儿童益智挑战完成"); else { kidsAnswer.value = (kidsAnswer.value + 1) % spec.options.length; }
 }
 
+function startFunQuestion(): void {
+  const spec = funSpec.value;
+  if (!spec) return;
+  const question = spec.questions[funGame.value?.questionIndex ?? 0];
+  if (!question) { finishGame("趣味挑战完成"); return; }
+  const orderItems = question.order ? shuffle(question.order.map((index) => question.options[index] ?? "")) : [];
+  funGame.value = { spec, question, questionIndex: funGame.value?.questionIndex ?? 0, clueIndex: 0, orderItems, answered: false, hintUsed: false };
+  funFeedback.value = "";
+  funHintVisible.value = false;
+  timerLabel.value = spec.mode === "clue" && slug.value === "who-am-i" ? "线索 1" : "";
+}
+function startFunGame(): void {
+  const spec = funSpec.value;
+  if (!spec) return;
+  funGame.value = null;
+  lives.value = 3;
+  combo.value = 0;
+  startFunQuestion();
+  status.value = "playing";
+}
+function nextFunQuestion(): void {
+  if (!funGame.value) return;
+  if (funGame.value.questionIndex + 1 >= funGame.value.spec.questions.length) { finishGame("全部题目完成！"); return; }
+  funGame.value.questionIndex += 1;
+  startFunQuestion();
+}
+function answerFun(index: number): void {
+  const game = funGame.value;
+  if (!game || status.value !== "playing" || game.answered) return;
+  if (game.spec.mode === "order") return;
+  game.answered = true;
+  const correct = index === game.question.answer;
+  if (correct) {
+    combo.value += 1;
+    const clueBonus = slug.value === "who-am-i" ? Math.max(1, (game.question.clues?.length ?? 1) - game.clueIndex) : 0;
+    score.value += 10 + combo.value * 2 + clueBonus;
+    funFeedback.value = `答对啦！${game.question.explanation}`;
+    if (game.questionIndex + 1 >= game.spec.questions.length) { finishGame("全部题目完成！"); return; }
+    pulseTimer = window.setTimeout(nextFunQuestion, 1000);
+  } else {
+    lives.value -= 1;
+    combo.value = 0;
+    funFeedback.value = `再想一想。${game.question.explanation}`;
+    if (lives.value <= 0) { finishGame("生命用完了，再挑战一次吧"); return; }
+    pulseTimer = window.setTimeout(() => { if (funGame.value) { funGame.value.answered = false; funFeedback.value = ""; } }, 1200);
+  }
+}
+function revealFunClue(): void {
+  const game = funGame.value;
+  if (!game || status.value !== "playing" || game.answered) return;
+  const clues = game.question.clues ?? [];
+  if (game.clueIndex < clues.length - 1) game.clueIndex += 1;
+  timerLabel.value = `线索 ${game.clueIndex + 1}`;
+}
+function useFunHint(): void {
+  const game = funGame.value;
+  if (!game || slug.value !== "lantern-riddles" || game.hintUsed || game.answered || status.value !== "playing") return;
+  game.hintUsed = true;
+  score.value = Math.max(0, score.value - 2);
+  funHintVisible.value = true;
+}
+function moveStoryCard(index: number): void {
+  const game = funGame.value;
+  if (!game || game.answered || status.value !== "playing") return;
+  const items = game.orderItems;
+  if (index < 0 || index >= items.length - 1) return;
+  [items[index], items[index + 1]] = [items[index + 1] ?? "", items[index] ?? ""];
+}
+function submitStoryOrder(): void {
+  const game = funGame.value;
+  if (!game || game.answered || status.value !== "playing") return;
+  const expected = game.question.order?.map((index) => game.question.options[index]) ?? [];
+  game.answered = true;
+  if (game.orderItems.join("|") === expected.join("|")) {
+    combo.value += 1;
+    score.value += 12 + combo.value * 2;
+    funFeedback.value = `顺序正确！${game.question.explanation}`;
+    if (game.questionIndex + 1 >= game.spec.questions.length) { finishGame("故事全部整理完成！"); return; }
+    pulseTimer = window.setTimeout(nextFunQuestion, 1000);
+  } else {
+    lives.value -= 1;
+    combo.value = 0;
+    funFeedback.value = `顺序还可以再调整。${game.question.explanation}`;
+    if (lives.value <= 0) { finishGame("生命用完了，再试一次吧"); return; }
+    pulseTimer = window.setTimeout(() => { if (funGame.value) { funGame.value.answered = false; funFeedback.value = ""; } }, 1200);
+  }
+}
+
 function handleMergeTouchStart(event: TouchEvent): void {
   const touch = event.touches[0];
   if (touch) mergeTouchStart.value = { x: touch.clientX, y: touch.clientY };
@@ -322,7 +425,7 @@ function handleMergeTouchEnd(event: TouchEvent): void {
 }
 
 const statusLabel = computed(() => ({ idle: "准备开始", playing: "进行中", paused: "已暂停", gameover: "本局结束" })[status.value]);
-const modeLabel = computed(() => kidsSpec.value ? `第 ${kidsRound.value + 1} 题 · 生命 ${lives.value}` : slug.value === "wordsmith" ? `生命 ${lives.value}` : slug.value === "tiny-trails" ? `第 ${level.value} 关` : slug.value === "last-light" ? `波次 ${enemyWave.value}` : slug.value === "pixel-punch" ? `连击 ${pixelCombo.value}` : slug.value === "color-switch" ? `连击 ${colorCombo.value}` : slug.value === "merge-2048" ? (mergeWon.value ? "已达 2048" : "方格游戏") : slug.value === "sky-hopper" ? `高度 ${Math.floor(skyHeight.value)}` : slug.value === "garden-match" ? `机会 ${gardenAttempts.value}` : slug.value === "neon-memory" ? (neonShowing.value ? "观察中" : `顺序 ${neonNext.value + 1}`) : slug.value === "cannon-stack" ? `波次 ${enemyWave.value}` : slug.value === "fruit-slice" ? `${fruitTimeLeft.value}s` : slug.value === "maze-escape" ? `${mazeTimeLeft.value}s` : `${orbitStableSeconds.value.toFixed(1)}s 稳定`);
+const modeLabel = computed(() => funSpec.value ? `第 ${(funGame.value?.questionIndex ?? 0) + 1} 题 · 生命 ${lives.value}` : kidsSpec.value ? `第 ${kidsRound.value + 1} 题 · 生命 ${lives.value}` : slug.value === "wordsmith" ? `生命 ${lives.value}` : slug.value === "tiny-trails" ? `第 ${level.value} 关` : slug.value === "last-light" ? `波次 ${enemyWave.value}` : slug.value === "pixel-punch" ? `连击 ${pixelCombo.value}` : slug.value === "color-switch" ? `连击 ${colorCombo.value}` : slug.value === "merge-2048" ? (mergeWon.value ? "已达 2048" : "方格游戏") : slug.value === "sky-hopper" ? `高度 ${Math.floor(skyHeight.value)}` : slug.value === "garden-match" ? `机会 ${gardenAttempts.value}` : slug.value === "neon-memory" ? (neonShowing.value ? "观察中" : `顺序 ${neonNext.value + 1}`) : slug.value === "cannon-stack" ? `波次 ${enemyWave.value}` : slug.value === "fruit-slice" ? `${fruitTimeLeft.value}s` : slug.value === "maze-escape" ? `${mazeTimeLeft.value}s` : `${orbitStableSeconds.value.toFixed(1)}s 稳定`);
 
 function readHighScore(): void {
   try { highScore.value = Number.parseInt(localStorage.getItem(storageKey.value) ?? "0", 10) || 0; } catch { highScore.value = 0; }
@@ -356,6 +459,9 @@ function resetCommon(): void {
   message.value = "";
   timerLabel.value = "";
   elapsed.value = 0;
+  funGame.value = null;
+  funFeedback.value = "";
+  funHintVisible.value = false;
 }
 
 function makeOrbitPlanets(): void {
@@ -939,7 +1045,8 @@ function newFrame(now: number): void {
 function startGame(): void {
   if (!isSupported.value) return;
   resetCommon();
-  if (slug.value === "orbit-architect") startOrbit();
+  if (funSpec.value) startFunGame();
+  else if (slug.value === "orbit-architect") startOrbit();
   else if (slug.value === "wordsmith") startWord();
   else if (slug.value === "pixel-punch") startPixel();
   else if (slug.value === "tiny-trails") startTrail();
@@ -967,6 +1074,7 @@ function togglePause(): void {
     else if (slug.value === "cannon-stack") { lastFrame = performance.now(); animationFrame = window.requestAnimationFrame(cannonFrame); }
     else if (slug.value === "fruit-slice") { lastFrame = performance.now(); animationFrame = window.requestAnimationFrame(fruitFrame); }
     else if (slug.value === "maze-escape") timer = window.setInterval(mazeTick, 1000);
+    else if (funSpec.value) { /* 趣味题目没有后台动画，恢复后继续接受答题。 */ }
     else if (kidsSpec.value) { if (kidsMode.value === "sequence" && kidsShowing.value) { pulseTimer = window.setTimeout(() => { kidsShowing.value = false; }, 1300); } }
     else if (supportedSlugs.slice(13).includes(slug.value as GameSlug)) { lastFrame = performance.now(); animationFrame = window.requestAnimationFrame(newFrame); }
   }
@@ -975,6 +1083,7 @@ function handleKeydown(event: KeyboardEvent): void {
   if (event.key === "p" || event.key === "P") { event.preventDefault(); togglePause(); return; }
   if (["Enter", " "].includes(event.key) && (status.value === "idle" || status.value === "gameover")) { event.preventDefault(); startGame(); return; }
   if (status.value !== "playing") return;
+  if (funSpec.value && funGame.value?.spec.mode !== "order" && /^[1-9]$/.test(event.key)) { event.preventDefault(); answerFun(Number(event.key) - 1); return; }
   if (slug.value === "orbit-architect" && (event.key === "ArrowLeft" || event.key === "ArrowRight")) { event.preventDefault(); if (event.key === "ArrowLeft") adjustOrbit(-1); else adjustOrbit(1); }
   else if (slug.value === "wordsmith" && /^[a-zA-Z]$/.test(event.key)) { const token = wordTokens.value.find((item) => !item.used && item.letter === event.key.toLowerCase()); if (token) pickWordLetter(token); }
   else if (slug.value === "pixel-punch" && event.key === " ") { event.preventDefault(); hitPixel(); }
@@ -1049,7 +1158,20 @@ onBeforeUnmount(() => { clearLoops(); window.removeEventListener("keydown", hand
     </section>
 
     <section v-if="isSupported" class="mini-card">
-      <div v-if="slug === 'orbit-architect'" class="mini-arena orbit-arena" @pointerdown="selectOrbit">
+      <div v-if="funSpec" class="mini-arena fun-arena">
+        <template v-if="funGame">
+          <div class="fun-progress"><span>第 {{ funGame.questionIndex + 1 }} / {{ funGame.spec.questions.length }} 题</span><span>生命 {{ lives }} · 连击 {{ combo }}</span></div>
+          <div class="fun-prompt"><span v-if="funGame.question.display" class="fun-display">{{ funGame.question.display }}</span><strong>{{ funGame.question.prompt }}</strong></div>
+          <div v-if="slug === 'who-am-i'" class="fun-clues"><p v-for="(clue, index) in funGame.question.clues" :key="clue" v-show="index <= funGame.clueIndex">线索 {{ index + 1 }}：{{ clue }}</p><button type="button" :disabled="funGame.clueIndex >= (funGame.question.clues?.length ?? 1) - 1 || funGame.answered" @click="revealFunClue">揭示下一条线索</button></div>
+          <div v-if="slug === 'lantern-riddles'" class="fun-tools"><button type="button" :disabled="funGame.hintUsed || funGame.answered" @click="useFunHint">提示（-2 分）</button><span v-if="funHintVisible">提示：{{ funGame.question.hint }}</span></div>
+          <div v-if="funGame.spec.mode !== 'order'" class="fun-options"><button v-for="(option, index) in funGame.question.options" :key="`${option}-${index}`" type="button" :disabled="funGame.answered" @click="answerFun(index)">{{ option }}</button></div>
+          <div v-else class="fun-order"><p>点击相邻卡片交换位置：</p><div class="fun-order-list"><button v-for="(item, index) in funGame.orderItems" :key="`${item}-${index}`" type="button" :disabled="funGame.answered" @click="moveStoryCard(index)">{{ index + 1 }} · {{ item }}</button></div><button class="fun-submit" type="button" :disabled="funGame.answered" @click="submitStoryOrder">提交顺序</button></div>
+          <p class="fun-feedback" aria-live="polite">{{ funFeedback || `生命 ${lives} · 连续答对会增加连击` }}</p>
+        </template>
+        <div v-else class="fun-waiting">准备好开始趣味挑战吧！</div>
+        <div v-if="status !== 'playing'" class="mini-overlay"><b>{{ status === 'gameover' ? message : status === 'paused' ? '游戏暂停' : config.title }}</b><p>{{ status === 'gameover' ? `本局 ${score} 分，最高 ${highScore} 分` : config.description }}</p><button class="mini-primary" type="button" @click="startGame">{{ status === 'gameover' ? '重新开始' : '开始游戏' }}</button></div>
+      </div>
+      <div v-else-if="slug === 'orbit-architect'" class="mini-arena orbit-arena" @pointerdown="selectOrbit">
         <div class="orbit-sun">✦</div>
         <div v-for="(planet, index) in orbitPlanets" :key="planet.name" class="orbit-ring" :class="{ selected: orbitSelected === index, unstable: planet.error > .48 }" :style="{ width: `${planet.radius * 2}%`, height: `${planet.radius * 2}%` }"><i class="orbit-planet" :style="{ background: planet.color, '--planet-angle': `${(index * 120 + elapsed * planet.drift * 8) % 360}deg`, '--planet-distance': `${planet.radius * 2}px` }">{{ planet.name }}</i></div>
         <div v-if="status !== 'playing'" class="mini-overlay"><b>{{ status === 'gameover' ? '轨道失衡' : status === 'paused' ? '系统暂停' : '建立平衡' }}</b><p>{{ status === 'gameover' ? message : config.description }}</p><button class="mini-primary" type="button" @click="startGame">{{ status === 'gameover' ? '重新开始' : '开始游戏' }}</button></div>
@@ -1188,4 +1310,5 @@ onBeforeUnmount(() => { clearLoops(); window.removeEventListener("keydown", hand
 .new-arena{background:radial-gradient(circle at 50% 35%,#163742,#071319 72%);touch-action:manipulation}.arena-timer{position:absolute;top:14px;left:50%;z-index:3;transform:translateX(-50%);padding:6px 10px;border-radius:999px;color:#f8e6ae;background:#061017bb;font-size:12px;font-weight:700;white-space:nowrap}.new-target{position:absolute;z-index:2;display:grid;place-items:center;min-width:48px;min-height:48px;border:2px solid #fff8;border-radius:50%;transform:translate(-50%,-50%);font-size:22px;box-shadow:0 0 22px currentColor}.quick-target{color:#44300b}.quick-arena{background:radial-gradient(circle,#5d4d27,#071319 70%)}.tower-arena{display:flex;align-items:center;justify-content:center;background:linear-gradient(#112b39,#081318)}.stack-platform{position:absolute;height:22px;transform:translateX(-50%);border:2px solid #ffd166;border-radius:5px;background:#f59e0b;box-shadow:0 0 15px #f59e0b88}.stack-drop,.arena-action{position:absolute;bottom:17px;z-index:3;min-height:48px;padding:0 18px;border:1px solid #ffd166;border-radius:8px;color:#261b08;background:#ffd166;font-weight:800}.dodge-arena{background:repeating-linear-gradient(90deg,#0a1e2b 0 12%,#0d2936 12% 13%)}.new-player{position:absolute;z-index:3;transform:translateX(-50%);font-size:34px;filter:drop-shadow(0 0 10px #fff6)}.falling-entity{position:absolute;z-index:2;transform:translate(-50%,-50%);font-size:25px;filter:drop-shadow(0 0 8px #ff8c69)}.ring-arena{display:grid;place-items:center;background:radial-gradient(circle,#241b42,#071319 70%)}.runner-ring{position:absolute;border:2px solid #b692ff66;border-radius:50%;aspect-ratio:1}.runner-ring.outer{width:78%}.runner-ring.inner{width:45%}.runner-orb{position:absolute;z-index:2;font-size:28px;transform:translateX(-50%)}.runner-orb.lane-0{top:12%}.runner-orb.lane-1{top:29%}.ring-obstacle{position:absolute;z-index:2;left:50%;transform:translate(-50%,-50%);color:#ff7dba;font-size:28px}.ring-obstacle.lane-0{margin-top:-91px}.ring-obstacle.lane-1{margin-top:-48px}.bubble-arena{background:radial-gradient(circle,#123f52,#071319 72%)}.bubble{position:absolute;z-index:2;display:grid;place-items:center;width:54px;height:54px;padding:0;border:3px solid #fff8;border-radius:50%;transform:translate(-50%,-50%);color:#fff8;font-size:36px;box-shadow:inset -8px -8px 12px #0002,0 0 18px currentColor}.number-arena{display:grid;place-items:center;background:linear-gradient(145deg,#14293e,#071319)}.number-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:min(90%,340px);aspect-ratio:1}.number-grid button{min-width:44px;min-height:44px;border:1px solid #41627b;border-radius:8px;color:#d9ebff;background:#102434;font-size:20px;font-weight:800}.number-grid button.next,.number-grid button.lit{color:#14220e;background:#82d173;box-shadow:0 0 18px #82d173}.number-grid button.empty{border-color:transparent;background:#071319}.puzzle-grid button{color:#422f14;background:#e6bd6b}.puzzle-grid button.empty{background:#071319}.simon-arena{background:radial-gradient(circle,#30234b,#071319 70%)}.pipe-arena{display:grid;place-items:center;background:linear-gradient(145deg,#173b3e,#071319)}.pipe-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;width:min(88%,310px);aspect-ratio:1}.pipe-cell{min-width:44px;min-height:44px;border:1px solid #5f9d91;border-radius:8px;color:#aee8d6;background:#12413e;font-size:42px;line-height:1;transition:transform .18s}.pipe-cell.rotate-1{transform:rotate(90deg)}.pipe-cell.rotate-2{transform:rotate(180deg)}.pipe-cell.rotate-3{transform:rotate(270deg)}.pipe-cell.source{color:#7ddcff;box-shadow:0 0 18px #7ddcff}.pipe-cell.goal{color:#9de889;box-shadow:0 0 18px #9de889}.sum-target{position:absolute;top:48px;color:#d7e5ff;font-size:24px}.sum-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:min(90%,340px)}.sum-grid button{min-height:58px;border:1px solid #6289c7;border-radius:8px;color:#e5edff;background:#18335c;font-size:21px;font-weight:800}.sum-grid button.selected{color:#122037;background:#7da8ff;box-shadow:0 0 16px #7da8ff}.defense-arena{background:linear-gradient(#132d42,#071319 75%)}.defense-target{background:#183243aa}.harbor-line{position:absolute;right:0;bottom:0;left:0;padding:15px;color:#d9f5ff;background:#15506c;font-weight:800;text-align:center}.shadow-arena{background:radial-gradient(circle,#352849,#071319 72%)}.number-grid button.shadow{color:#fff;background:#bd8ce0;box-shadow:0 0 22px #bd8ce0}.laser-arena{background:linear-gradient(145deg,#321d35,#071319)}.laser-line{position:absolute;top:50%;right:0;left:0;height:3px;background:#f06f9f;box-shadow:0 0 12px #f06f9f}.laser-grid{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:min(88%,320px);aspect-ratio:1}.reflector{min-width:54px;min-height:54px;border:2px solid #f06f9f;border-radius:8px;color:#ffd8e7;background:#5e2747;font-size:34px;box-shadow:0 0 12px #f06f9f88}.laser-goal{position:absolute;right:-4%;top:46%;color:#fff;font-size:32px}.farm-arena{display:grid;place-items:center;background:linear-gradient(#24482b,#0b1a11)}.farm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:min(88%,320px)}.farm-grid button{min-height:76px;border:1px solid #7fab64;border-radius:10px;color:#eaffd6;background:#37613a;font-size:28px}.farm-grid .farm-stage-0{background:#593d2c}.farm-grid .farm-stage-1{background:#1f5a57}.farm-grid .farm-stage-2{background:#367a45}.farm-grid .farm-stage-3{background:#8b7b3b}.tower-balance-arena{display:flex;align-items:center;justify-content:flex-end;flex-direction:column;padding-bottom:24px;background:linear-gradient(#3b2e20,#101713)}.balance-tower{display:grid;place-items:center;min-width:70px;color:#f5d694;font-size:28px;background:#9b6d38;transition:height .2s}.tower-balance-arena p{margin:12px;color:#f5d694}.weight-options{display:flex;gap:8px}.weight-options button,.traffic-light{min-height:48px;padding:0 12px;border:1px solid #e5b76b;border-radius:8px;color:#34240e;background:#e5b76b;font-weight:800}.traffic-arena{background:linear-gradient(90deg,#192b33 49%,#405057 50% 51%,#192b33 52%)}.traffic-light{position:absolute;top:18px;left:50%;z-index:3;transform:translateX(-50%);background:#e05252}.traffic-light.go{background:#72d486}.traffic-cross{position:absolute;top:50%;left:50%;color:#d8d3aa;font-size:60px;transform:translate(-50%,-50%)}.car{position:absolute;z-index:2;transform:translate(-50%,-50%);font-size:25px}.island-arena{display:grid;place-items:center;background:linear-gradient(#63c7db,#287a8a)}.island-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;width:min(90%,330px);aspect-ratio:1}.island-grid button{min-width:44px;min-height:44px;border:1px solid #ffffff33;border-radius:6px;color:#bce9e6;background:#3b9eaa;font-size:20px}.island-grid button.land{background:#73c4a5;box-shadow:0 0 10px #73c4a566}.dive-arena{background:linear-gradient(#0b4264,#071827 55%,#061017)}.submarine{position:absolute;left:20%;z-index:3;transform:translate(-50%,-50%);font-size:32px}.reef{position:absolute;z-index:2;transform:translate(-50%,-50%);font-size:28px}.dive-treasure{position:absolute;top:40%;right:20%;z-index:2;min-width:52px;min-height:52px;border:0;border-radius:50%;background:#f2ce62;font-size:25px;box-shadow:0 0 20px #f2ce62}.mini-controls button{min-height:44px;min-width:44px}@media (max-width:360px){.mini-game-page{width:calc(100% - 16px)}.mini-heading h1{font-size:18px}.mini-arena{min-height:350px}.mini-scoreboard strong{font-size:16px}.mini-controls{gap:5px}.mini-controls button{padding:0 8px}}@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
 .reaction-arena{background:radial-gradient(circle at 50% 45%,#382d31,#071319 72%)}.reaction-grid{position:absolute;inset:0;background:linear-gradient(135deg,#ffffff05 25%,transparent 25% 50%,#ffffff04 50% 75%,transparent 75%);background-size:34px 34px}.reaction-target{z-index:2}.reaction-target.mole{border-radius:12px;background:#c98c62;box-shadow:0 0 18px #c98c62}.color-match-arena{display:grid;place-items:center;background:radial-gradient(circle,#39283b,#071319 70%)}.match-orb{display:grid;place-items:center;width:150px;height:150px;border:8px solid #ffffff33;border-radius:50%;box-shadow:0 0 40px currentColor;color:#fff;font-size:15px;font-weight:800}.match-options{position:absolute;bottom:48px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;width:calc(100% - 28px)}.match-options button,.safe-grid button,.button-memory-grid button,.odd-grid button,.pairs-grid button,.lights-grid button,.sort-grid button,.shape-grid button,.strategy-grid button,.math-options button,.weather-actions button,.bridge-actions button,.market-actions button,.fuel-actions button{min-width:44px;min-height:44px;border:1px solid #ffffff33;border-radius:8px;color:#fff;background:#19303a;font-weight:800}.safe-arena{display:grid;place-items:center;background:radial-gradient(circle,#203b36,#071319 70%)}.safe-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:min(88%,330px)}.safe-grid button{height:76px;color:#10251e;background:#63d7bc;box-shadow:0 0 14px #63d7bc55}.safe-grid button.danger{color:#fff;background:#e56b6f;box-shadow:0 0 18px #e56b6f88}.draw-arena{display:grid;place-items:center;background:linear-gradient(145deg,#2f2735,#071319)}.draw-signal{padding:18px 26px;border:2px solid #f4c95d;border-radius:12px;color:#f4c95d;background:#3a2e23;font-size:28px;font-weight:900}.draw-signal.fire{color:#fff;background:#d45362;box-shadow:0 0 32px #e56b6f}.draw-button{position:absolute;bottom:40px;min-width:110px;min-height:54px;border:0;border-radius:50%;color:#fff;background:#b74e67;font-weight:900}.button-memory-arena,.lights-arena,.pattern-arena{display:grid;place-items:center;background:radial-gradient(circle,#1d3150,#071319 72%)}.button-memory-grid,.lights-grid,.pattern-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:min(82%,320px);aspect-ratio:1}.button-memory-grid button{border-radius:50%;background:#213952}.button-memory-grid button.lit,.pattern-grid button.lit{color:#172035;background:#7bb7ff;box-shadow:0 0 22px #7bb7ff}.physics-arena{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:15px;background:linear-gradient(#183c36,#071319)}.physics-scene{display:flex;align-items:center;justify-content:space-between;width:78%;padding:28px 10px;border-bottom:3px solid #9ed36a;background:linear-gradient(90deg,#ffffff08 1px,transparent 1px);background-size:28px 28px;font-size:42px}.physics-goal{color:#f7d774;font-size:34px}.physics-arena label{display:grid;grid-template-columns:52px 1fr;align-items:center;width:76%;color:#b7d7cb;font-size:11px}.physics-arena input{width:100%;accent-color:#9ed36a}.physics-launch{min-width:110px;min-height:48px;border:1px solid #9ed36a;border-radius:8px;color:#13251e;background:#9ed36a;font-weight:900}.movement-arena{background:repeating-linear-gradient(110deg,#142e3c 0 18px,#102733 18px 36px)}.movement-lanes{position:absolute;inset:0;background:linear-gradient(90deg,transparent 32%,#ffffff18 32% 33%,transparent 33% 65%,#ffffff18 65% 66%,transparent 66%)}.movement-entity{position:absolute;z-index:2;transform:translate(-50%,-50%);font-size:28px;filter:drop-shadow(0 0 8px #f0c75e)}.odd-arena,.pairs-arena,.sort-arena,.shape-arena{display:grid;place-items:center;background:radial-gradient(circle,#27334b,#071319 72%)}.odd-grid,.pairs-grid,.shape-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;width:min(88%,340px);aspect-ratio:1}.odd-grid button{color:#c29cff;background:#243253;font-size:24px}.odd-grid button.odd{color:#fff;background:#c29cff;box-shadow:0 0 20px #c29cff}.pairs-grid button{color:#f2a6c2;background:#23334a;font-size:25px}.pairs-grid button.revealed{color:#242137;background:#f2a6c2}.lights-grid{width:min(78%,300px)}.lights-grid button{border-radius:50%;background:#142332}.lights-grid button.on{color:#423713;background:#f7d774;box-shadow:0 0 24px #f7d774}.sort-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;width:min(82%,320px)}.sort-grid button{height:92px;border-radius:40% 40% 12px 12px}.sort-grid .drop-1{color:#fff;background:#d96a95}.sort-grid .drop-2{color:#fff;background:#6f9de1}.sort-grid .drop-3{color:#fff;background:#71d1bd}.word-scramble-arena,.math-arena{display:grid;place-items:center;gap:20px;background:radial-gradient(circle,#3b3030,#071319 72%)}.scramble-word{color:#f5b46b;font-size:30px;font-weight:900;letter-spacing:.2em}.math-question{color:#86a8f4;font-size:36px}.math-options{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:75%}.math-options button{color:#17243e;background:#86a8f4;font-size:22px}.pattern-grid button{border-radius:50%;color:#d18be9;background:#25304b}.shape-grid button{color:#7fd4e7;background:#1b3440;font-size:25px}.shape-grid button.placed{color:#17322b;background:#7fd4e7}.shape-grid button.selected{outline:3px solid #fff}.strategy-grid-arena{display:grid;place-items:center;background:radial-gradient(circle,#263f3d,#071319 72%)}.strategy-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;width:min(84%,320px);aspect-ratio:1}.strategy-grid button{min-width:44px;min-height:44px;border-radius:5px;color:#9dbeb2;background:#18332f}.strategy-grid button.cell-1{color:#10231c;background:#7dcc9d}.strategy-grid button.cell-2{color:#1c2a3b;background:#8cb9e8}.strategy-actions{display:flex;gap:8px}.strategy-actions button{min-width:44px;min-height:44px;border:1px solid #70c8d5;border-radius:50%;color:#071319;background:#70c8d5;font-weight:900}.market-arena{display:grid;place-items:center;gap:14px;background:linear-gradient(#3c3322,#071319)}.market-chart{position:relative;width:72%;height:180px;padding:14px;border:1px solid #f1b969;border-radius:8px;background:linear-gradient(transparent 24%,#ffffff14 25% 26%,transparent 26% 49%,#ffffff14 50% 51%,transparent 51% 74%,#ffffff14 75% 76%,transparent 76%)}.market-chart strong{position:absolute;top:10px;color:#f1b969}.market-chart span{position:absolute;right:24%;bottom:0;width:36px;border-radius:5px 5px 0 0;background:#f1b969;box-shadow:0 0 18px #f1b969}.market-actions,.fuel-actions,.bridge-actions,.weather-actions{display:flex;gap:8px}.market-actions button,.fuel-actions button,.bridge-actions button,.weather-actions button{padding:0 13px;color:#211a0d;background:#f1b969}.campfire-arena{display:grid;place-items:center;gap:14px;background:radial-gradient(circle,#542d20,#071319 70%)}.campfire{font-size:80px;filter:drop-shadow(0 0 30px #ed956b)}.fire-meter{width:72%;height:18px;border:2px solid #ed956b;border-radius:99px;overflow:hidden}.fire-meter i{display:block;height:100%;background:#ed956b;transition:width .2s}.bridge-arena{display:grid;place-items:center;gap:18px;background:linear-gradient(#233b4b,#071319)}.bridge-gap{display:flex;align-items:center;justify-content:space-between;width:82%;color:#c69a73;font-weight:800}.bridge-gap i{display:block;height:12px;border-top:4px solid #c69a73;border-bottom:4px solid #c69a73;background:#9b785c}.weather-arena{display:grid;place-items:center;gap:18px;background:linear-gradient(#40536f,#071319)}.weather-icon{font-size:76px}.weather-actions button{color:#152134;background:#9cbded}@media (max-width:360px){.mini-arena{min-height:340px}.mini-heading h1{font-size:18px}.strategy-grid{width:92%}}@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
 .kids-arena{display:flex;flex-direction:column;align-items:center;gap:16px;padding:24px 14px;background:radial-gradient(circle at 50% 25%,#244d59,#071319 75%);touch-action:manipulation}.kids-prompt{display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center}.kids-icon{font-size:clamp(42px,14vw,70px);line-height:1}.kids-prompt strong{color:#f8e6ae;font-size:clamp(18px,5vw,25px)}.kids-prompt small{color:#a8c8c1;font-size:12px}.kids-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:min(100%,350px)}.kids-grid button,.kids-options button{min-width:44px;min-height:64px;border:2px solid #ffffff33;border-radius:14px;color:#f5f8ef;background:#17343d;font-size:clamp(22px,8vw,38px);font-weight:800;touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent}.find-grid button{background:linear-gradient(145deg,#285666,#16323d);box-shadow:0 5px 0 #0a2029}.find-grid button:active,.pair-grid button:active,.sequence-grid button:active{transform:translateY(2px)}.pair-grid button{font-size:30px;background:#214755}.pair-grid button.revealed{color:#17323b;background:#ffe6a6}.pair-grid button.matched{color:#17323b;background:#8ed7b5}.sequence-grid button{font-size:24px}.sequence-grid button.shining{color:#17323b;background:#ffd166;box-shadow:0 0 24px #ffd166}.kids-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;width:min(100%,350px)}.kids-options button{padding:10px;color:#17323b;background:#9bd9c9;font-size:clamp(18px,5vw,26px)}.kids-options button:nth-child(2){background:#f4c95d}.kids-options button:nth-child(3){background:#9fc5ef}.kids-options button:nth-child(4){background:#ef9eb4}.kids-options button.correct{box-shadow:0 0 0 4px #fff,0 0 22px #63d7bc}.kids-feedback{min-height:24px;color:#f8e6ae;font-size:14px;font-weight:700}@media (max-width:360px){.kids-arena{gap:11px;padding:18px 9px}.kids-grid{gap:7px}.kids-grid button,.kids-options button{min-height:58px}.kids-prompt strong{font-size:17px}}
+.fun-arena{display:flex;flex-direction:column;align-items:center;gap:14px;padding:22px 14px;background:radial-gradient(circle at 50% 18%,#284a54,#071319 72%);touch-action:manipulation}.fun-progress{display:flex;justify-content:space-between;width:100%;color:#9bc7bf;font-size:12px}.fun-prompt{display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;min-height:104px;text-align:center}.fun-prompt strong{max-width:390px;color:#f8e6ae;font-size:clamp(20px,5vw,28px);line-height:1.45}.fun-display{padding:12px 16px;border:1px solid #ffffff33;border-radius:12px;color:#fff6c9;background:#183943;font-size:clamp(28px,9vw,48px);letter-spacing:.08em}.fun-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;width:min(100%,390px)}.fun-options button,.fun-tools button,.fun-clues button,.fun-order-list button,.fun-submit{min-width:44px;min-height:52px;padding:8px 10px;border:1px solid #ffffff3d;border-radius:10px;color:#17323b;background:#a9dfcd;font-size:clamp(16px,4.5vw,21px);font-weight:800;touch-action:manipulation}.fun-options button:nth-child(2n){background:#f4cb76}.fun-options button:nth-child(3n){background:#a8c5f2}.fun-options button:disabled,.fun-tools button:disabled,.fun-clues button:disabled,.fun-order-list button:disabled,.fun-submit:disabled{opacity:.7}.fun-tools,.fun-clues{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%;color:#f8e6ae;font-size:13px;text-align:center}.fun-tools button,.fun-clues button,.fun-submit{min-height:44px;padding:8px 16px;color:#17323b;background:#f0c46c;font-size:14px}.fun-clues p{width:100%;margin:0;padding:7px 10px;border-left:3px solid #c79ae8;color:#d8eae4;background:#ffffff0b;text-align:left}.fun-order{width:100%;text-align:center}.fun-order>p{margin:0 0 8px;color:#a8c8c1;font-size:13px}.fun-order-list{display:flex;flex-direction:column;gap:8px}.fun-order-list button{width:100%;color:#f5f8ef;background:#315c67;text-align:left}.fun-order-list button:nth-child(2n){background:#396b68}.fun-submit{margin-top:12px}.fun-feedback{min-height:42px;width:100%;margin:0;color:#f8e6ae;font-size:14px;line-height:1.5;text-align:center}.fun-waiting{display:grid;place-items:center;min-height:300px;color:#b9d8d0;font-size:18px;text-align:center}@media (max-width:360px){.fun-arena{gap:11px;padding:18px 9px}.fun-prompt{min-height:92px}.fun-options{gap:7px}.fun-options button{min-height:50px;padding:7px 5px;font-size:16px}.fun-order-list{gap:6px}.fun-order-list button{min-height:48px;padding:7px;font-size:15px}}@media (prefers-reduced-motion:reduce){.fun-arena *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 </style>

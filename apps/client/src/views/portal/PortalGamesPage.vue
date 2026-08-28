@@ -81,7 +81,7 @@ onMounted(async () => {
       <div v-else class="portal-card-grid portal-dense-grid">
         <article v-for="game in games" :key="game.slug" class="portal-card" :style="{ '--accent': game.accent ?? '#55d8bb' }">
           <RouterLink :to="`/zh/game/${game.slug}`">
-            <div class="portal-card-art" :style="coverStyle(game)"><span v-if="!game.cover_url">{{ game.legacy_icon || game.title.slice(0, 1) }}</span><span class="portal-status" :class="{ playable: playable(game) }">{{ playable(game) ? "可玩" : "接入中" }}</span></div>
+            <div class="portal-card-art" :style="coverStyle(game)"><span v-if="!game.cover_url" class="portal-art-glyph">{{ game.legacy_icon || game.title.slice(0, 1) }}</span><span class="portal-status" :class="{ playable: playable(game) }">{{ playable(game) ? "可玩" : "接入中" }}</span></div>
             <div class="portal-card-copy"><span class="portal-card-category">{{ game.categories[0]?.name ?? "游戏" }} · {{ game.developer_name }}</span><h2>{{ game.title }}</h2><p>{{ game.short_description }}</p><small>{{ game.tags.slice(0, 3).join(" · ") }} · {{ game.orientation === "portrait" ? "竖屏" : "横屏/自适应" }}</small></div>
           </RouterLink>
           <button class="portal-favorite" type="button" :aria-label="favorites.includes(game.slug) ? `取消收藏 ${game.title}` : `收藏 ${game.title}`" :aria-pressed="favorites.includes(game.slug)" @click.stop.prevent="favorite(game.slug)">{{ favorites.includes(game.slug) ? "★" : "☆" }}</button>

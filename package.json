@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "npm run dev --workspace apps/server & npm run dev --workspace apps/client",
     "typecheck": "npm run build --workspace packages/shared && npm run typecheck --workspace apps/server && npm run typecheck --workspace apps/client",
-    "build": "npm run build --workspace packages/shared && npm run build --workspace apps/server && npm run build --workspace apps/client"
+    "build": "npm run build --workspace packages/shared && npm run build --workspace apps/server && npm run build --workspace apps/client",
+    "build:pages": "npm run typecheck && npm run build --workspace apps/server && node scripts/generate-static-catalog.mjs && VITE_DEPLOY_TARGET=github-pages npm run build --workspace apps/client && cp apps/client/dist/index.html apps/client/dist/404.html"
   }
 }

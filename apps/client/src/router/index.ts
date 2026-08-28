@@ -47,7 +47,7 @@ const noIndex = { robots: "noindex,follow" };
 const portal = { portal: true };
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     { path: "/", redirect: "/zh" },
     { path: "/home", redirect: "/zh" },
@@ -152,6 +152,14 @@ const router = createRouter({
     { path: "/games/flood-fill", name: "flood-fill", component: MiniGameView, meta: noNavigation },
     { path: "/games/bridge-builder", name: "bridge-builder", component: MiniGameView, meta: noNavigation },
     { path: "/games/weather-planner", name: "weather-planner", component: MiniGameView, meta: noNavigation },
+    { path: "/games/riddle-master", name: "riddle-master", component: MiniGameView, meta: noNavigation },
+    { path: "/games/lantern-riddles", name: "lantern-riddles", component: MiniGameView, meta: noNavigation },
+    { path: "/games/idiom-picture", name: "idiom-picture", component: MiniGameView, meta: noNavigation },
+    { path: "/games/brain-teaser", name: "brain-teaser", component: MiniGameView, meta: noNavigation },
+    { path: "/games/who-am-i", name: "who-am-i", component: MiniGameView, meta: noNavigation },
+    { path: "/games/story-order", name: "story-order", component: MiniGameView, meta: noNavigation },
+    { path: "/games/true-or-funny", name: "true-or-funny", component: MiniGameView, meta: noNavigation },
+    { path: "/games/word-riddle", name: "word-riddle", component: MiniGameView, meta: noNavigation },
     { path: "/games/find-star", name: "find-star", component: MiniGameView, meta: noNavigation },
     { path: "/games/find-cat", name: "find-cat", component: MiniGameView, meta: noNavigation },
     { path: "/games/find-color", name: "find-color", component: MiniGameView, meta: noNavigation },
