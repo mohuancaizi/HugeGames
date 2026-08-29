@@ -267,6 +267,8 @@ const router = createRouter({
 router.afterEach((to) => {
   const robots = document.querySelector('meta[name="robots"]') || document.createElement("meta");
   robots.setAttribute("name", "robots"); robots.setAttribute("content", typeof to.meta.robots === "string" ? to.meta.robots : "index,follow"); document.head.appendChild(robots);
-  const canonical = document.querySelector('link[rel="canonical"]') || document.createElement("link"); canonical.setAttribute("rel", "canonical"); canonical.setAttribute("href", `${window.location.origin}${to.path}`); document.head.appendChild(canonical);
+  const canonical = document.querySelector('link[rel="canonical"]') || document.createElement("link");
+  const basePath = import.meta.env.BASE_URL.endsWith("/") ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+  canonical.setAttribute("rel", "canonical"); canonical.setAttribute("href", new URL(`${basePath}${to.path.replace(/^\/+/, "")}`, window.location.origin).href); document.head.appendChild(canonical);
 });
 export default router;

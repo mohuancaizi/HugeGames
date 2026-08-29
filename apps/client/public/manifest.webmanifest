@@ -1,13 +1,32 @@
 {
-  "name": "Arcade Hub 冒险者大厅",
-  "short_name": "Arcade Hub",
-  "description": "移动端卡牌 RPG 游戏大厅",
+  "name": "星屿游廊",
+  "short_name": "星屿游廊",
+  "description": "发现轻量、原创、无需安装的中文网页游戏。",
   "lang": "zh-CN",
-  "start_url": "./",
+  "start_url": "./zh",
   "scope": "./",
   "display": "standalone",
+  "orientation": "any",
   "background_color": "#0d1018",
   "theme_color": "#0d1018",
-  "orientation": "portrait",
-  "icons": []
+  "icons": [
+    {
+      "src": "./icons/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-512-maskable.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
 }

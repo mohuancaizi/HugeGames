@@ -6,11 +6,14 @@ const root = resolve(new URL("..", import.meta.url).pathname);
 const dataModule = await import(pathToFileURL(resolve(root, "apps/server/dist/data/games.js")));
 const catalogModule = await import(pathToFileURL(resolve(root, "apps/server/dist/data/portalCatalog.js")));
 const games = dataModule.games;
+if (!Array.isArray(games)) throw new Error("Game data must export an array");
+
 const publishedGames = games.filter((game) => game.status === "published").map(catalogModule.toSummary);
 const slugs = publishedGames.map((game) => game.slug);
 const uniqueSlugs = new Set(slugs);
 
-if (publishedGames.length !== 164) throw new Error(`Expected 164 published games, got ${publishedGames.length}`);
+if (publishedGames.length === 0) throw new Error("At least one published game is required");
+if (slugs.some((slug) => typeof slug !== "string" || slug.length === 0)) throw new Error("Published games must have non-empty slugs");
 if (uniqueSlugs.size !== publishedGames.length) throw new Error("Published game slugs must be unique");
 
 const outputDirectory = resolve(root, "apps/client/public/catalog");

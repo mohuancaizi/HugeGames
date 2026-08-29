@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">星屿游廊</title>
+  <desc id="desc">星屿游廊 maskable 应用图标</desc>
+  <rect width="512" height="512" fill="#0d1018"/>
+  <circle cx="256" cy="256" r="172" fill="#182b4a" stroke="#5dd6e8" stroke-width="16"/>
+  <path d="M256 129l31.6 86.8L387 248l-99.4 32.2L256 367l-31.6-86.8L125 248l99.4-32.2z" fill="#f3c969"/>
+  <circle cx="256" cy="248" r="30" fill="#fff7d6"/>
+  <circle cx="154" cy="152" r="13" fill="#fff7d6"/>
+  <circle cx="369" cy="355" r="10" fill="#5dd6e8"/>
+</svg>
