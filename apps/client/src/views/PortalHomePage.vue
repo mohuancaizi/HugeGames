@@ -3,7 +3,7 @@ import { computed, onMounted, ref } from "vue"; import { useRouter } from "vue-r
 const router = useRouter(); const loading = ref(true); const error = ref(""); const legacy = ref(false); const categories = ref<CategoryItem[]>([]); const featured = ref<PublishedGameSummary[]>([]); const popular = ref<PublishedGameSummary[]>([]); const newest = ref<PublishedGameSummary[]>([]); const editor = ref<PublishedGameSummary[]>([]); const recent = ref<PublishedGameSummary[]>([]); const favorites = ref<string[]>([]); const fallbackCategories: CategoryItem[] = [];
 const allRecent = computed(() => { const slugs = readRecent().values; return slugs.map((slug) => [...popular.value, ...newest.value].find((game) => game.slug === slug)).filter((game): game is PublishedGameSummary => Boolean(game)); });
 function favorite(slug: string): void { favorites.value = toggleFavorite(slug).values; }
-function play(slug: string): void { rememberRecent(slug); void router.push(`/zh/game/${slug}/play`); }
+function play(slug: string): void { rememberRecent(slug); void router.push(`/games/${slug}`); }
 async function load(): Promise<void> { loading.value = true; error.value = ""; try { const data = await getCatalogHome(); legacy.value = data.legacy_fallback; categories.value = data.categories; featured.value = data.featured; popular.value = data.popular; newest.value = data.new_games; editor.value = data.editor_picks; recent.value = data.recent; } catch { error.value = "首页内容暂时无法加载，请重试。"; } finally { loading.value = false; } }
 onMounted(() => { favorites.value = readFavorites().values; void load(); document.title = "星屿游廊｜发现原创网页游戏"; });
 </script>

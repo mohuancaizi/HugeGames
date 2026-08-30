@@ -8,6 +8,7 @@ import type {
   PagedResponse,
   PublishedGameSummary,
 } from "@arcade/shared";
+import { getPortalCategories as getStaticCapableCategories, getPortalGames as getStaticCapableGames } from "./portalApi";
 
 export type ApiErrorCode =
   | "NETWORK_ERROR"
@@ -119,19 +120,36 @@ export const getHealth = (): Promise<HealthResponse> => request<HealthResponse>(
 export const getGame = (slug: string): Promise<GameInfo> => requestAt<GameInfo>(legacyApiBaseUrl, `/games/${slug}`);
 
 export async function getPortalGames(query: PortalGamesQuery = {}): Promise<PagedResponse<PublishedGameSummary>> {
-  try { return await request<PagedResponse<PublishedGameSummary>>(`/games${buildQuery(query)}`); } catch (error) {
-    if (!(error instanceof ApiRequestError) || error.code !== "NOT_FOUND") throw error;
-    let data = await getLegacyGames();
-    if (query.category) data = data.filter((game) => game.categories.some((item) => item.slug === query.category));
-    if (query.sort === "newest" || query.sort === "updated") data = [...data].reverse();
+  try {
+    const data = await request<PublishedGameSummary[]>(`/games${buildQuery(query)}`);
     return { data, total: data.length, next_cursor: null };
+  } catch {
+    const sort = query.sort === "recommended" ? "featured" : query.sort === "newest" ? "new" : query.sort;
+    const result = await getStaticCapableGames({ category: query.category, sort, limit: query.limit });
+    return { data: result.data, total: result.meta.total, next_cursor: null };
   }
 }
-export async function getCategories(): Promise<CategoryItem[]> { try { return await request<CategoryItem[]>("/categories"); } catch (error) { if (error instanceof ApiRequestError && error.code === "NOT_FOUND") return categoryDefinitions; throw error; } }
+export async function getCategories(): Promise<CategoryItem[]> {
+  try { return await request<CategoryItem[]>("/categories"); } catch { return (await getStaticCapableCategories()).data; }
+}
 export async function getCategoryGames(slug: string, query: PortalGamesQuery = {}): Promise<PagedResponse<PublishedGameSummary>> { try { return await request<PagedResponse<PublishedGameSummary>>(`/categories/${encodeURIComponent(slug)}/games${buildQuery(query)}`); } catch (error) { if (!(error instanceof ApiRequestError) || error.code !== "NOT_FOUND") throw error; return getPortalGames({ ...query, category: slug }); } }
 export async function searchPortalGames(q: string): Promise<PagedResponse<PublishedGameSummary>> { try { return await request<PagedResponse<PublishedGameSummary>>(`/search${buildQuery({ q: q.slice(0, 100), limit: 50 })}`); } catch (error) { if (!(error instanceof ApiRequestError) || error.code !== "NOT_FOUND") throw error; const normalized = q.trim().toLowerCase(); const data = (await getLegacyGames()).filter((game) => `${game.title} ${game.short_description} ${game.slug} ${game.tags.join(" ")}`.toLowerCase().includes(normalized)); return { data, total: data.length, next_cursor: null }; } }
 export async function getPortalGame(slug: string): Promise<GameDetail> { try { return await request<GameDetail>(`/games/${encodeURIComponent(slug)}`); } catch (error) { if (!(error instanceof ApiRequestError) || error.code !== "NOT_FOUND") throw error; const game = (await getLegacyGames()).find((item) => item.slug === slug); if (!game) throw error; return toDetail(game); } }
-export async function getCatalogHome(): Promise<CatalogHome> { try { return await request<CatalogHome>("/catalog/home?locale=zh-CN"); } catch (error) { if (!(error instanceof ApiRequestError) || error.code !== "NOT_FOUND") throw error; const data = await getLegacyGames(); return { featured: data.filter((game) => game.featured), popular: data, new_games: [...data].reverse(), editor_picks: data.slice(0, 3), recent: [], categories: categoryDefinitions, legacy_fallback: true }; } }
+export async function getCatalogHome(): Promise<CatalogHome> {
+  try { return await request<CatalogHome>("/catalog/home?locale=zh-CN"); } catch {
+    try {
+      const [gamesResult, categoriesResult] = await Promise.all([
+        getStaticCapableGames({ limit: 50 }),
+        getStaticCapableCategories(),
+      ]);
+      const data = gamesResult.data;
+      return { featured: data.filter((game) => game.featured), popular: data, new_games: [...data].sort((a, b) => b.updated_at.localeCompare(a.updated_at)), editor_picks: data.filter((game) => game.featured).slice(0, 3), recent: [], categories: categoriesResult.data, legacy_fallback: false };
+    } catch {
+      const data = await getLegacyGames();
+      return { featured: data.filter((game) => game.featured), popular: data, new_games: [...data].reverse(), editor_picks: data.slice(0, 3), recent: [], categories: categoryDefinitions, legacy_fallback: true };
+    }
+  }
+}
 export async function requestGameLaunch(slug: string): Promise<GameLaunchStateResponse> { try { return await request<GameLaunchStateResponse>(`/games/${encodeURIComponent(slug)}/launches`, { method: "POST", body: JSON.stringify({}) }); } catch (error) { if (error instanceof ApiRequestError && error.code === "NOT_FOUND") return { state: "blocked", game_id: `legacy-${slug}`, release_id: "", launch_mode: "same-origin", message: "当前服务端尚未提供启动票据，原型游戏不会在门户中伪造启动成功。" }; throw error; } }
 export async function sendAnalyticsEvents(events: Record<string, unknown>[]): Promise<void> { try { await request<unknown>("/analytics/events", { method: "POST", body: JSON.stringify({ events }) }); } catch (error) { if (!(error instanceof ApiRequestError) || error.code !== "NOT_FOUND") throw error; } }
 

@@ -71,7 +71,7 @@ function isPlayable(game: GameInfo): boolean {
 function openGame(game: GameInfo): void {
   if (!isPlayable(game)) return;
   rememberRecent(game.slug);
-  void router.push(`/zh/game/${game.slug}/play`);
+  void router.push(`/games/${game.slug}`);
 }
 
 async function loadGames(): Promise<void> {
