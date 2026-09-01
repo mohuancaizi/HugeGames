@@ -1,6 +1,24 @@
 export type KidsGameMode = "find" | "pairs" | "sequence" | "quiz" | "sort";
 export type KidsGameSpec = { title: string; icon: string; mode: KidsGameMode; prompt: string; options: string[]; answer: number };
 
+export function validateKidsGameSpec(slug: string, spec: KidsGameSpec): string[] {
+  const errors: string[] = [];
+  const options = Array.isArray(spec?.options) ? spec.options : [];
+  if (!spec.title || !spec.icon || !spec.prompt) errors.push(`${slug}: title/icon/prompt must be non-empty`);
+  if (options.length === 0 || options.some((option) => typeof option !== "string" || option.trim().length === 0)) errors.push(`${slug}: options must be non-empty`);
+  if (!Number.isInteger(spec.answer) || spec.answer < 0 || spec.answer >= options.length) errors.push(`${slug}: answer index is out of range`);
+  if (spec.mode === "find" && (!options[spec.answer] || !options.includes(spec.icon))) errors.push(`${slug}: find target is missing`);
+  if (spec.mode === "pairs" && new Set(options).size < 2) errors.push(`${slug}: pairs need at least two distinct pairs`);
+  if (spec.mode === "sequence" && options.length < 2) errors.push(`${slug}: sequence needs usable options`);
+  return errors;
+}
+
+export function validateKidsGameSpecs(specs: Record<string, KidsGameSpec>): string[] {
+  const errors = Object.entries(specs).flatMap(([slug, spec]) => validateKidsGameSpec(slug, spec));
+  if (Object.keys(specs).length === 0) errors.push("kidsGameSpecs: at least one spec is required");
+  return errors;
+}
+
 export const kidsGameSlugs = `find-star find-cat find-color find-shape find-fruit find-shadow find-number find-letter find-twin find-tail spot-dot spot-face spot-leaf spot-cloud spot-button odd-animal odd-food odd-vehicle odd-robot odd-flower animal-pairs fruit-pairs vehicle-pairs shape-pairs color-pairs sound-memory picture-memory star-memory toy-memory food-memory card-flip-kids memory-path emoji-sequence light-sequence animal-sequence train-memory rainbow-memory garden-memory space-memory ocean-memory count-apples count-stars count-balloons count-fish number-order number-match add-ten add-twenty minus-ten times-two compare-number more-or-less missing-number number-path shape-count coin-count-kids clock-kids calendar-kids math-balloons number-bingo color-paint color-order rainbow-sort shape-sort shape-rotate shape-shadow shape-build pattern-color pattern-shape pattern-size shadow-fit picture-puzzle tile-match-kids jigsaw-simple mirror-match left-right up-down inside-outside near-far same-different animal-home fruit-basket toy-box dress-up-order wash-hands brush-teeth plant-grow cook-soup sort-recycle safe-crossing traffic-color day-night hot-cold big-small long-short heavy-light happy-sad animal-food home-rooms simple-path`.split(" ") as string[];
 
 const icons = ["⭐", "🐱", "🎨", "🔷", "🍎", "🌙", "🔢", "🔤", "👯", "🦊", "🔎", "🙂", "🍃", "☁️", "🔘", "🦄", "🍕", "🚗", "🤖", "🌸", "🐾", "🍓", "🚲", "🔺", "🟣", "🔔", "🖼️", "🌟", "🧸", "🍪", "🃏", "🛤️", "😀", "💡", "🐶", "🚂", "🌈", "🌱", "🚀", "🐳", "🍎", "⭐", "🎈", "🐟", "🔢", "🔗", "➕", "🔟", "➖", "✖️", "⚖️", "↔️", "❓", "🛣️", "🔺", "🪙", "🕒", "📅", "🎈", "🎯", "🖌️", "🌈", "🔷", "🔄", "🌑", "🧩", "🎨", "🔺", "🧱", "🔍", "🧩", "🧱", "🪞", "⬅️", "⬆️", "📦", "📏", "⚪", "🏠", "🍎", "🧸", "👕", "🧼", "🪥", "🌱", "🍲", "♻️", "🚸", "🚦", "🌞", "🌡️", "↕️", "📏", "⚖️", "🙂", "🐶", "🚪", "🧭"];
@@ -11,8 +29,9 @@ const findOptions = ["⭐", "🐱", "🍎", "🚗", "🌈", "🧸", "🔺", "�
 const sortOptions = ["正确", "再想想", "换一个", "先等等"];
 
 function makeFindOptions(icon: string, answer: number): string[] {
+  const targetIndex = Math.min(8, Math.max(0, answer));
   const distractors = findOptions.filter((item) => item !== icon).slice(0, 8);
-  distractors.splice(answer, 0, icon);
+  distractors.splice(targetIndex, 0, icon);
   return distractors;
 }
 
@@ -21,5 +40,8 @@ export const kidsGameSpecs: Record<string, KidsGameSpec> = Object.fromEntries(ki
   const icon = icons[index] ?? "⭐";
   const answer = index % 4;
   const options = mode === "find" ? makeFindOptions(icon, index % 9) : mode === "pairs" || mode === "sequence" ? [icon, icons[(index + 1) % icons.length] ?? "🌟", icons[(index + 2) % icons.length] ?? "🍀", icons[(index + 3) % icons.length] ?? "🌈", icons[(index + 4) % icons.length] ?? "🦋", icons[(index + 5) % icons.length] ?? "🐝", icons[(index + 6) % icons.length] ?? "🍓", icons[(index + 7) % icons.length] ?? "🚂", icons[(index + 8) % icons.length] ?? "☀️"] : mode === "quiz" ? [String((index % 5) + 1), String((index % 5) + 2), String((index % 5) + 3), String((index % 5) + 4)] : [sortOptions[index % sortOptions.length], "不合适", "还可以", "不确定"];
-  return [slug, { title: titleFor(slug), icon, mode, prompt: mode === "find" ? `请找到唯一的${icon}` : mode === "pairs" ? `翻牌找出相同的${icon}` : mode === "sequence" ? `记住${icon}出现的顺序` : mode === "quiz" ? `${icon} 小问题：请选择正确答案` : `${icon} 小问题：哪一个最合适？`, options, answer: mode === "find" ? index % 9 : answer } satisfies KidsGameSpec];
+  return [slug, { title: titleFor(slug), icon, mode, prompt: mode === "find" ? `请找到唯一的${icon}` : mode === "pairs" ? `翻牌找出相同的${icon}` : mode === "sequence" ? `记住${icon}出现的顺序` : mode === "quiz" ? `${icon} 小问题：请选择正确答案` : `${icon} 小问题：哪一个最合适？`, options, answer: mode === "find" ? Math.min(8, index % 9) : answer } satisfies KidsGameSpec];
 })) as Record<string, KidsGameSpec>;
+
+const kidsGameSpecErrors = validateKidsGameSpecs(kidsGameSpecs);
+if (kidsGameSpecErrors.length > 0) throw new Error(`Invalid kids game data:\n${kidsGameSpecErrors.join("\n")}`);

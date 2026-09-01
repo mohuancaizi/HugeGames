@@ -19,6 +19,25 @@ export type FunGameSpec = {
   questions: FunQuestion[];
 };
 
+export function validateFunGameSpec(slug: string, spec: FunGameSpec): string[] {
+  const errors: string[] = [];
+  if (!spec.title || !spec.icon || !spec.prompt || spec.questions.length === 0) errors.push(`${slug}: basic fields/questions are required`);
+  spec.questions.forEach((question, index) => {
+    if (!question.prompt || !question.explanation || question.options.length === 0) errors.push(`${slug}[${index}]: prompt/options/explanation are required`);
+    if (!Number.isInteger(question.answer) || question.answer < 0 || question.answer >= question.options.length) errors.push(`${slug}[${index}]: answer index is out of range`);
+    if (spec.mode === "order") {
+      const order = question.order ?? [];
+      if (order.length !== question.options.length || new Set(order).size !== order.length || order.some((item) => item < 0 || item >= question.options.length)) errors.push(`${slug}[${index}]: order must be a permutation of options`);
+    }
+    if (spec.mode === "clue" && (!question.clues || question.clues.length === 0) && !question.hint) errors.push(`${slug}[${index}]: clue question needs clues or a hint`);
+  });
+  return errors;
+}
+
+export function validateFunGameSpecs(specs: Record<string, FunGameSpec>): string[] {
+  return Object.entries(specs).flatMap(([slug, spec]) => validateFunGameSpec(slug, spec));
+}
+
 export const funGameSlugs = [
   "riddle-master",
   "lantern-riddles",
@@ -160,3 +179,6 @@ export const funGameSpecs: Record<(typeof funGameSlugs)[number], FunGameSpec> = 
     ],
   },
 };
+
+const funGameSpecErrors = validateFunGameSpecs(funGameSpecs);
+if (funGameSpecErrors.length > 0) throw new Error(`Invalid fun game data:\n${funGameSpecErrors.join("\n")}`);

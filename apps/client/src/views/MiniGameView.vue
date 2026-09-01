@@ -4,11 +4,12 @@ import { RouterLink, useRoute } from "vue-router";
 import { rememberRecent } from "../services/portalStorage";
 import { kidsGameSlugs, kidsGameSpecs, type KidsGameMode } from "../data/kidsGameSpecs";
 import { funGameSlugs, funGameSpecs, type FunGameMode, type FunQuestion, type FunGameSpec } from "../data/funGameSpecs";
+import { clamp, floodRegion, isOrthogonalNeighbor, orthogonalNeighbors, rectanglesCollide, toggleCross, pipeConnected } from "../games/engines/utils";
 
 type GameStatus = "idle" | "playing" | "paused" | "gameover";
 type GameSlug = "riddle-master" | "lantern-riddles" | "idiom-picture" | "brain-teaser" | "who-am-i" | "story-order" | "true-or-funny" | "word-riddle" | "orbit-architect" | "wordsmith" | "pixel-punch" | "tiny-trails" | "last-light" | "color-switch" | "merge-2048" | "sky-hopper" | "garden-match" | "neon-memory" | "cannon-stack" | "fruit-slice" | "maze-escape" | "quick-tap" | "stack-tower" | "rocket-dodge" | "ring-runner" | "bubble-pop" | "number-chain" | "simon-grid" | "slide-puzzle" | "pipe-connect" | "sum-cross" | "meteor-guard" | "harbor-defense" | "shadow-hunt" | "laser-grid" | "drone-swarm" | "mini-farm" | "tower-balance" | "traffic-flow" | "island-builder" | "deep-dive" | "tap-rush" | "color-match" | "dont-touch-red" | "quick-draw" | "whack-mole" | "coin-catcher" | "target-range" | "button-memory" | "golf-putt" | "basket-shot" | "bowling-mini" | "fishing-cast" | "snowboard-dash" | "skate-line" | "paper-plane" | "odd-one-out" | "memory-pairs" | "lights-out" | "color-sort" | "word-scramble" | "math-blitz" | "pattern-lock" | "shape-fit" | "resource-route" | "market-merchant" | "campfire-keeper" | "colony-grid" | "flood-fill" | "bridge-builder" | "weather-planner" | (typeof kidsGameSlugs)[number];
 
-type NewEntity = { id: number; x: number; y: number; value?: number; color?: string; hit?: boolean; kind?: string };
+type NewEntity = { id: number; x: number; y: number; value?: number; color?: string; hit?: boolean; kind?: string; size?: number };
 type PipeCell = { id: number; rotation: number; shape: string };
 type FarmPlot = { id: number; stage: number };
 type OrbitPlanet = { name: string; color: string; radius: number; target: number; drift: number; error: number };
@@ -108,6 +109,9 @@ const timerLabel = ref("");
 
 let timer = 0;
 let pulseTimer = 0;
+let pulseRemaining = 0;
+let pulseDueAt = 0;
+let pulseCallback: (() => void) | null = null;
 let animationFrame = 0;
 let lastFrame = 0;
 const elapsed = ref(0);
@@ -215,7 +219,9 @@ const newTowerHeight = ref(0);
 const newIsland = ref<number[]>([]);
 const newIslandCapacity = ref(12);
 const newDiveY = ref(50);
+const newTreasureTaken = ref(false);
 const newLaserRotations = ref<number[]>([]);
+const newFloodMoves = ref(0);
 const newRoundTime = ref(0);
 const newPower = ref(50);
 const newAngle = ref(50);
@@ -223,6 +229,7 @@ const newActive = ref(0);
 const newQuickState = ref(0);
 const newTargetColor = ref(0);
 const newMemoryFirst = ref<number | null>(null);
+const newMemorySecond = ref<number | null>(null);
 const newMathQuestion = ref("2 + 3 = ?");
 const newMathOptions = ref<number[]>([4, 5, 6]);
 const newPattern = ref<number[]>([]);
@@ -276,7 +283,7 @@ function startKidsRound(): void {
     kidsSequence.value = Array.from({ length }, () => Math.floor(Math.random() * spec.options.length));
     kidsSequenceNext.value = 0;
     kidsShowing.value = true;
-    pulseTimer = window.setTimeout(() => { kidsShowing.value = false; }, 1300 + length * 120);
+    schedulePulse(1300 + length * 120, () => { kidsShowing.value = false; });
   }
 }
 function startKidsGame(): void { kidsRound.value = 0; kidsSequence.value = []; kidsCards.value = []; kidsShowing.value = false; lives.value = 3; status.value = "playing"; startKidsRound(); }
@@ -300,12 +307,17 @@ function kidsPick(index: number): void {
       if (kidsCards.value.every((item) => item.matched)) { kidsRound.value += 1; if (kidsRound.value >= 2) finishGame("所有卡片都配对成功"); else startKidsRound(); }
     } else {
       lives.value -= 1;
-      if (first) first.revealed = false;
-      card.revealed = false;
-      kidsFirst.value = null;
-      kidsBusy.value = false;
       message.value = "这两张不一样，再找找看";
-      if (lives.value <= 0) finishGame("配对机会用完了");
+      if (lives.value <= 0) {
+        finishGame("配对机会用完了");
+        return;
+      }
+      schedulePulse(650, () => {
+        if (first) first.revealed = false;
+        card.revealed = false;
+        kidsFirst.value = null;
+        kidsBusy.value = false;
+      });
     }
     return;
   }
@@ -358,13 +370,13 @@ function answerFun(index: number): void {
     score.value += 10 + combo.value * 2 + clueBonus;
     funFeedback.value = `答对啦！${game.question.explanation}`;
     if (game.questionIndex + 1 >= game.spec.questions.length) { finishGame("全部题目完成！"); return; }
-    pulseTimer = window.setTimeout(nextFunQuestion, 1000);
+    schedulePulse(1000, nextFunQuestion);
   } else {
     lives.value -= 1;
     combo.value = 0;
     funFeedback.value = `再想一想。${game.question.explanation}`;
     if (lives.value <= 0) { finishGame("生命用完了，再挑战一次吧"); return; }
-    pulseTimer = window.setTimeout(() => { if (funGame.value) { funGame.value.answered = false; funFeedback.value = ""; } }, 1200);
+    schedulePulse(1200, () => { if (funGame.value) { funGame.value.answered = false; funFeedback.value = ""; } });
   }
 }
 function revealFunClue(): void {
@@ -398,13 +410,13 @@ function submitStoryOrder(): void {
     score.value += 12 + combo.value * 2;
     funFeedback.value = `顺序正确！${game.question.explanation}`;
     if (game.questionIndex + 1 >= game.spec.questions.length) { finishGame("故事全部整理完成！"); return; }
-    pulseTimer = window.setTimeout(nextFunQuestion, 1000);
+    schedulePulse(1000, nextFunQuestion);
   } else {
     lives.value -= 1;
     combo.value = 0;
     funFeedback.value = `顺序还可以再调整。${game.question.explanation}`;
     if (lives.value <= 0) { finishGame("生命用完了，再试一次吧"); return; }
-    pulseTimer = window.setTimeout(() => { if (funGame.value) { funGame.value.answered = false; funFeedback.value = ""; } }, 1200);
+    schedulePulse(1200, () => { if (funGame.value) { funGame.value.answered = false; funFeedback.value = ""; } });
   }
 }
 
@@ -435,18 +447,57 @@ function saveHighScore(): void {
   highScore.value = score.value;
   try { localStorage.setItem(storageKey.value, String(highScore.value)); } catch { /* 保留内存中的最高分 */ }
 }
+function schedulePulse(delay: number, callback: () => void): void {
+  window.clearTimeout(pulseTimer);
+  pulseRemaining = Math.max(0, delay);
+  pulseDueAt = performance.now() + pulseRemaining;
+  pulseCallback = callback;
+  pulseTimer = window.setTimeout(() => {
+    pulseTimer = 0;
+    pulseRemaining = 0;
+    pulseDueAt = 0;
+    pulseCallback = null;
+    if (status.value === "playing") callback();
+  }, pulseRemaining);
+}
+function pausePulse(): void {
+  if (!pulseTimer) return;
+  pulseRemaining = Math.max(0, pulseDueAt - performance.now());
+  window.clearTimeout(pulseTimer);
+  pulseTimer = 0;
+}
+function resumePulse(): void {
+  if (pulseCallback) schedulePulse(pulseRemaining, pulseCallback);
+}
+function clearScheduledPulse(): void {
+  window.clearTimeout(pulseTimer);
+  pulseTimer = 0;
+  pulseRemaining = 0;
+  pulseDueAt = 0;
+  pulseCallback = null;
+}
 function clearLoops(): void {
   window.clearInterval(timer);
-  window.clearTimeout(pulseTimer);
   timer = 0;
-  pulseTimer = 0;
   window.cancelAnimationFrame(animationFrame);
   animationFrame = 0;
+  clearScheduledPulse();
+}
+function pauseLoops(): void {
+  window.clearInterval(timer);
+  timer = 0;
+  window.cancelAnimationFrame(animationFrame);
+  animationFrame = 0;
+  pausePulse();
 }
 function finishGame(text = "挑战完成"): void {
+  if (status.value === "gameover") return;
   clearLoops();
   status.value = "gameover";
   message.value = text;
+  skyLeft.value = false;
+  skyRight.value = false;
+  mergeTouchStart.value = null;
   saveHighScore();
 }
 function resetCommon(): void {
@@ -459,6 +510,9 @@ function resetCommon(): void {
   message.value = "";
   timerLabel.value = "";
   elapsed.value = 0;
+  skyLeft.value = false;
+  skyRight.value = false;
+  mergeTouchStart.value = null;
   funGame.value = null;
   funFeedback.value = "";
   funHintVisible.value = false;
@@ -619,7 +673,11 @@ function lastLightTick(): void {
     const distance = Math.sqrt(dx * dx + dy * dy);
     enemy.x += dx / distance * enemy.speed * 0.1;
     enemy.y += dy / distance * enemy.speed * 0.1;
-    if (distance < 8) { lives.value -= 1; towerPulse.value = true; window.clearTimeout(pulseTimer); pulseTimer = window.setTimeout(() => { towerPulse.value = false; }, 180); }
+    if (distance < 8) {
+      lives.value -= 1;
+      towerPulse.value = true;
+      schedulePulse(180, () => { towerPulse.value = false; });
+    }
     else next.push(enemy);
   }
   enemies.value = next;
@@ -744,10 +802,10 @@ function beginNeonRound(): void {
   neonNext.value = 0;
   neonTiles.value = Array.from({ length: count }, (_, id) => ({ id, lit: neonSequence.value.includes(id), clicked: false }));
   neonShowing.value = true;
-  pulseTimer = window.setTimeout(() => {
+  schedulePulse(Math.max(850, 1500 - level.value * 80), () => {
     neonTiles.value.forEach((tile) => { tile.lit = false; });
     neonShowing.value = false;
-  }, Math.max(850, 1500 - level.value * 80));
+  });
 }
 function clickNeon(tile: NeonTile): void {
   if (status.value === "idle" || status.value === "gameover") startGame();
@@ -757,10 +815,10 @@ function clickNeon(tile: NeonTile): void {
   if (neonNext.value === neonSequence.value.length) {
     level.value += 1; score.value += level.value * 5;
     message.value = "记忆升级";
-    pulseTimer = window.setTimeout(beginNeonRound, 420);
+    schedulePulse(420, beginNeonRound);
   }
 }
-function startNeon(): void { beginNeonRound(); status.value = "playing"; }
+function startNeon(): void { status.value = "playing"; beginNeonRound(); }
 
 function moveCannon(direction: -1 | 1): void { if (status.value === "idle" || status.value === "gameover") startGame(); if (status.value === "playing") cannonX.value = Math.max(8, Math.min(92, cannonX.value + direction * 8)); }
 function fireCannon(): void { if (status.value === "idle" || status.value === "gameover") startGame(); if (status.value !== "playing") return; cannonBullets.value.push({ id: cannonNextId.value++, x: cannonX.value, y: 88 }); }
@@ -848,17 +906,22 @@ function flipGarden(card: GardenCard): void {
     if (gardenPairs.value === 8) finishGame("花园里的花朵全部配对成功");
   } else {
     gardenAttempts.value -= 1; combo.value = 0;
-    pulseTimer = window.setTimeout(() => { if (first) first.flipped = false; card.flipped = false; gardenFirst.value = null; gardenBusy.value = false; if (gardenAttempts.value <= 0) finishGame("记忆机会用完了"); }, 650);
+    schedulePulse(650, () => {
+      if (first) first.flipped = false;
+      card.flipped = false;
+      gardenFirst.value = null;
+      gardenBusy.value = false;
+      if (gardenAttempts.value <= 0) finishGame("记忆机会用完了");
+    });
   }
 }
 
-function newEntity(x: number, y: number, value?: number, kind = "target", color?: string): NewEntity { return { id: newNextId.value++, x, y, value, kind, color }; }
-function resetNewEntities(): void { newEntities.value = []; newNextId.value = 0; newSelected.value = []; newRoundTime.value = 0; newTarget.value = 0; newSequence.value = []; newSequenceNext.value = 0; newShowIndex.value = -1; newShowing.value = false; newLaserRotations.value = []; newFarm.value = []; newPipe.value = []; newPower.value = 50; newAngle.value = 50; newActive.value = 0; newQuickState.value = 0; newTargetColor.value = 0; newMemoryFirst.value = null; newMarketCash.value = 20; newMarketStock.value = 0; newFire.value = 50; }
+function newEntity(x: number, y: number, value?: number, kind = "target", color?: string): NewEntity { return { id: newNextId.value++, x, y, value, kind, color, size: kind === "bubble" ? 8 : 6 }; }
+function resetNewEntities(): void { newEntities.value = []; newNextId.value = 0; newSelected.value = []; newRoundTime.value = 0; newTarget.value = 0; newSequence.value = []; newSequenceNext.value = 0; newShowIndex.value = -1; newShowing.value = false; newLaserRotations.value = []; newFloodMoves.value = 0; newTreasureTaken.value = false; newFarm.value = []; newPipe.value = []; newPower.value = 50; newAngle.value = 50; newActive.value = 0; newQuickState.value = 0; newTargetColor.value = 0; newMemoryFirst.value = null; newMemorySecond.value = null; newMarketCash.value = 20; newMarketStock.value = 0; newFire.value = 50; }
 function newGridClick(index: number): void {
-  if (status.value !== "playing") return;
+  if (status.value !== "playing" || index < 0 || index >= newGrid.value.length) return;
   if (slug.value === "lights-out") {
-    const cells = [index, index - 1, index + 1, index - 5, index + 5].filter((item) => item >= 0 && item < 25 && (Math.floor(item / 5) === Math.floor(index / 5) || Math.abs(item - index) === 5));
-    cells.forEach((item) => { newGrid.value[item] = newGrid.value[item] ? 0 : 1; });
+    newGrid.value = toggleCross(newGrid.value, index, 5);
     score.value += 1;
     if (newGrid.value.every((item) => item === 0)) finishGame("所有灯格已熄灭");
   } else if (slug.value === "odd-one-out") {
@@ -879,7 +942,7 @@ function newGridClick(index: number): void {
     else { newSelected.value = []; lives.value -= 1; if (lives.value <= 0) finishGame("试管混色失败"); }
   } else if (slug.value === "colony-grid") {
     if (newGrid.value[index] !== 0) return;
-    const neighbors = [index - 1, index + 1, index - 5, index + 5].filter((item) => item >= 0 && item < 25);
+    const neighbors = orthogonalNeighbors(index, 5, newGrid.value.length);
     if (!neighbors.some((item) => newGrid.value[item] > 0)) return;
     newGrid.value[index] = newActive.value + 1; score.value += 5;
     if (newGrid.value.filter((item) => item === 1).length >= 3 && newGrid.value.filter((item) => item === 2).length >= 2) finishGame("殖民地运转成功");
@@ -902,7 +965,17 @@ function launchPhysics(): void {
 function moveNewVertical(direction: -1 | 1): void { if (status.value === "idle" || status.value === "gameover") startGame(); if (status.value === "playing") newPlayer.value.y = Math.max(12, Math.min(86, newPlayer.value.y + direction * 8)); }
 function marketAction(action: "buy" | "sell"): void { if (status.value !== "playing") return; const price = newTarget.value; if (action === "buy" && newMarketCash.value >= price) { newMarketCash.value -= price; newMarketStock.value += 1; } else if (action === "sell" && newMarketStock.value > 0) { newMarketStock.value -= 1; newMarketCash.value += price; score.value = Math.max(score.value, newMarketCash.value); if (newMarketCash.value >= 45) finishGame("商路经营成功"); } }
 function campfireAction(value: number): void { if (status.value !== "playing") return; newFire.value += value; newRoundTime.value += 1; if (newFire.value < 15 || newFire.value > 95) { finishGame("营火熄灭或失控"); return; } score.value += 4; if (elapsed.value >= 18) finishGame("平安守到天亮"); }
-function routePlace(index: number): void { if (status.value !== "playing" || newGrid.value[index]) return; const neighbors = [index - 1, index + 1, index - 5, index + 5].filter((item) => item >= 0 && item < 25); if (!neighbors.some((item) => newGrid.value[item] === 1)) return; newGrid.value[index] = 1; score.value += 5; if (index === 24) finishGame("物资抵达营地"); }
+function routePlace(index: number): void {
+  if (status.value !== "playing" || index < 0 || index >= newGrid.value.length || newGrid.value[index]) return;
+  const neighbors = orthogonalNeighbors(index, 5, newGrid.value.length);
+  if (!neighbors.some((item) => newGrid.value[item] === 1)) {
+    message.value = "路线必须从相邻节点继续";
+    return;
+  }
+  newGrid.value[index] = 1;
+  score.value += 5;
+  if (index === 24) finishGame("物资抵达营地");
+}
 function floodPick(color: number): void { if (status.value !== "playing") return; newTargetColor.value = color; const old = newGrid.value[0]; newGrid.value = newGrid.value.map((item) => item === old ? color : item); score.value += 2; if (newGrid.value.every((item) => item === color)) finishGame("棋盘填色完成"); }
 function bridgePick(length: number): void { if (status.value !== "playing") return; const gap = newTarget.value; if (Math.abs(length - gap) > 8) finishGame("桥长不合适"); else { score.value += 12; newTarget.value = 28 + Math.floor(Math.random() * 42); if (score.value >= 48) finishGame("成功跨过所有峡谷"); } }
 function weatherPick(index: number): void { if (status.value !== "playing") return; if (index !== newWeather.value) { lives.value -= 1; if (lives.value <= 0) finishGame("天气计划失误"); return; } score.value += 10; level.value += 1; newWeather.value = Math.floor(Math.random() * 3); if (level.value >= 4) finishGame("三日计划完成"); }
@@ -930,7 +1003,7 @@ function startNewMode(): void {
   else if (slug.value === "color-match") { newTargetColor.value = Math.floor(Math.random() * 4); newRoundTime.value = 2; }
   else if (slug.value === "dont-touch-red") { newEntities.value = Array.from({ length: 9 }, (_, index) => newEntity(18 + (index % 3) * 32, 28 + Math.floor(index / 3) * 24, index === Math.floor(Math.random() * 9) ? 1 : 0, "safe", index === newTarget.value ? "#e56b6f" : "#63d7bc")); }
   else if (slug.value === "quick-draw") { newQuickState.value = 1; newRoundTime.value = 1.2 + Math.random() * 1.5; }
-  else if (slug.value === "button-memory") { newSequence.value = [Math.floor(Math.random() * 9), Math.floor(Math.random() * 9), Math.floor(Math.random() * 9)]; newSequenceNext.value = 0; newGrid.value = Array.from({ length: 9 }, () => 0); newShowing.value = true; pulseTimer = window.setTimeout(() => { newShowing.value = false; }, 1100); }
+  else if (slug.value === "button-memory") { newSequence.value = [Math.floor(Math.random() * 9), Math.floor(Math.random() * 9), Math.floor(Math.random() * 9)]; newSequenceNext.value = 0; newGrid.value = Array.from({ length: 9 }, () => 0); newShowing.value = true; schedulePulse(1100, () => { newShowing.value = false; }); }
   else if (["golf-putt", "basket-shot", "bowling-mini", "fishing-cast"].includes(slug.value)) startPhysics();
   else if (["snowboard-dash", "skate-line", "paper-plane", "coin-catcher"].includes(slug.value)) { newEntities.value = []; newRoundTime.value = 0; newPlayer.value = { x: 50, y: 78, vx: 0, vy: 0, lane: 1 }; }
   else if (slug.value === "odd-one-out") startOddOne();
@@ -939,7 +1012,7 @@ function startNewMode(): void {
   else if (slug.value === "color-sort") newGrid.value = [1, 2, 1, 2, 3, 3, 0, 0];
   else if (slug.value === "word-scramble") { wordRound.value = 0; nextWord(); newRoundTime.value = 8; }
   else if (slug.value === "math-blitz") { newTarget.value = 5; newMathQuestion.value = "2 + 3 = ?"; newMathOptions.value = [4, 5, 6]; newRoundTime.value = 3; }
-  else if (slug.value === "pattern-lock") { newPattern.value = shuffle(Array.from({ length: 9 }, (_, index) => index)).slice(0, 4); newPatternNext.value = 0; newShowing.value = true; pulseTimer = window.setTimeout(() => { newShowing.value = false; }, 1000); }
+  else if (slug.value === "pattern-lock") { newPattern.value = shuffle(Array.from({ length: 9 }, (_, index) => index)).slice(0, 4); newPatternNext.value = 0; newShowing.value = true; schedulePulse(1000, () => { newShowing.value = false; }); }
   else if (slug.value === "shape-fit") newGrid.value = [0, 1, 2, 3, 0, 0, 0, 0];
   else if (slug.value === "resource-route") { newGrid.value = Array.from({ length: 25 }, (_, index) => index === 0 ? 1 : 0); }
   else if (slug.value === "market-merchant") { newTarget.value = 4; newMarketCash.value = 20; newMarketStock.value = 0; newRoundTime.value = 2; }
@@ -950,13 +1023,37 @@ function startNewMode(): void {
   else if (slug.value === "weather-planner") { newWeather.value = Math.floor(Math.random() * 3); }
   lastFrame = performance.now(); animationFrame = window.requestAnimationFrame(newFrame);
 }
-function spawnShadow(): void { newTarget.value = Math.floor(Math.random() * 16); newEntities.value = [newEntity(8 + (newTarget.value % 4) * 28, 12 + Math.floor(newTarget.value / 4) * 20, newTarget.value, "shadow", "#bd8ce0")]; newShowing.value = true; newRoundTime.value = 1.1; pulseTimer = window.setTimeout(() => { newShowing.value = false; }, 600); }
-function beginNewSimon(): void { newSequence.value = [...newSequence.value, Math.floor(Math.random() * 16)]; newSequenceNext.value = 0; newShowIndex.value = 0; newGrid.value = Array.from({ length: 16 }, (_, index) => index); newShowing.value = true; const showNext = (): void => { if (newShowIndex.value >= newSequence.value.length) { newShowing.value = false; newShowIndex.value = -1; return; } pulseTimer = window.setTimeout(() => { newShowIndex.value += 1; showNext(); }, Math.max(260, 520 - level.value * 20)); }; showNext(); }
+function spawnShadow(): void { newTarget.value = Math.floor(Math.random() * 16); newEntities.value = [newEntity(8 + (newTarget.value % 4) * 28, 12 + Math.floor(newTarget.value / 4) * 20, newTarget.value, "shadow", "#bd8ce0")]; newShowing.value = true; newRoundTime.value = 1.1; schedulePulse(600, () => { newShowing.value = false; }); }
+function beginNewSimon(): void { newSequence.value = [...newSequence.value, Math.floor(Math.random() * 16)]; newSequenceNext.value = 0; newShowIndex.value = 0; newGrid.value = Array.from({ length: 16 }, (_, index) => index); newShowing.value = true; const showNext = (): void => { if (newShowIndex.value >= newSequence.value.length) { newShowing.value = false; newShowIndex.value = -1; return; } schedulePulse(Math.max(260, 520 - level.value * 20), () => { newShowIndex.value += 1; showNext(); }); }; showNext(); }
 function chooseTowerRound(): void { newTowerTarget.value = 2 + Math.floor(Math.random() * 7); newTowerOptions.value = shuffle([newTowerTarget.value - 1, newTowerTarget.value, newTowerTarget.value + 1]); }
-function rotatePipe(id: number): void { if (status.value !== "playing") return; const cell = newPipe.value.find((item) => item.id === id); if (!cell) return; cell.rotation = (cell.rotation + 1) % 4; if (newPipe.value.every((item) => item.rotation === 0)) { newPipeSolved.value = true; score.value += 50; finishGame("管道已连通"); } }
+function pipePorts(shape: string): number[] {
+  if (shape === "straight") return [1, 3];
+  if (shape === "cross") return [0, 1, 2, 3];
+  if (shape === "end") return [1];
+  return [0, 1];
+}
+function rotatePipe(id: number): void {
+  if (status.value !== "playing") return;
+  const cell = newPipe.value.find((item) => item.id === id);
+  if (!cell) return;
+  cell.rotation = (cell.rotation + 1) % 4;
+  const connected = pipeConnected(newPipe.value.map((item) => ({ rotation: item.rotation, ports: pipePorts(item.shape) })), 3, 0, 8);
+  if (connected) {
+    newPipeSolved.value = true;
+    score.value += 50;
+    finishGame("管道已连通");
+  } else {
+    message.value = "水路尚未接通，继续旋转管道";
+  }
+}
+function isLiveEntity(entity: NewEntity): boolean {
+  return newEntities.value.some((item) => item.id === entity.id);
+}
 function newClick(entity: NewEntity): void {
   if (status.value === "idle" || status.value === "gameover") startGame();
   if (status.value !== "playing") return;
+  const entityModes = ["quick-tap", "bubble-pop", "harbor-defense", "drone-swarm", "tap-rush", "whack-mole", "target-range", "dont-touch-red"];
+  if (entityModes.includes(slug.value) && !isLiveEntity(entity)) return;
   if (slug.value === "quick-tap") { score.value += 5 + combo.value++; if (combo.value >= 20) { finishGame("快速点击挑战完成"); return; } newEntities.value = [newEntity(10 + Math.random() * 80, 12 + Math.random() * 70, undefined, "quick", "#ffd166")]; newRoundTime.value = Math.max(.45, 1.5 - score.value / 180); return; }
   if (slug.value === "bubble-pop") { if (entity.color !== ["#5dd6e8", "#ff78a8", "#ffd166"][newTarget.value]) { lives.value -= 1; } else { score.value += 6; newTarget.value = (newTarget.value + 1) % 3; newEntities.value = newEntities.value.filter((item) => item.id !== entity.id); if (score.value >= 90) { finishGame("泡泡颜色挑战完成"); return; } } if (lives.value <= 0) finishGame("泡泡颜色混乱"); return; }
   if (slug.value === "number-chain") { if (entity.value !== newTarget.value) { lives.value -= 1; if (lives.value <= 0) finishGame("数字顺序出错"); return; } score.value += 4; newTarget.value += 1; if (newTarget.value > 16) { level.value += 1; score.value += 20; finishGame("数字链完成"); } return; }
@@ -1061,22 +1158,26 @@ function startGame(): void {
   else if (kidsSpec.value) startKidsGame();
   else startNewMode();
 }
+function resumeGameLoop(): void {
+  if (slug.value === "orbit-architect") { lastFrame = performance.now(); animationFrame = window.requestAnimationFrame(orbitFrame); }
+  else if (slug.value === "wordsmith") timer = window.setInterval(wordTick, 1000);
+  else if (slug.value === "pixel-punch") timer = window.setInterval(pixelTick, 100);
+  else if (slug.value === "last-light") timer = window.setInterval(lastLightTick, 100);
+  else if (slug.value === "color-switch") timer = window.setInterval(colorTick, 100);
+  else if (slug.value === "sky-hopper") { lastFrame = performance.now(); animationFrame = window.requestAnimationFrame(skyFrame); }
+  else if (slug.value === "cannon-stack") { lastFrame = performance.now(); animationFrame = window.requestAnimationFrame(cannonFrame); }
+  else if (slug.value === "fruit-slice") { lastFrame = performance.now(); animationFrame = window.requestAnimationFrame(fruitFrame); }
+  else if (slug.value === "maze-escape") timer = window.setInterval(mazeTick, 1000);
+  else if (!funSpec.value && !kidsSpec.value && supportedSlugs.slice(13).includes(slug.value as GameSlug)) { lastFrame = performance.now(); animationFrame = window.requestAnimationFrame(newFrame); }
+  resumePulse();
+}
 function togglePause(): void {
-  if (status.value === "playing") { status.value = "paused"; clearLoops(); }
-  else if (status.value === "paused") {
+  if (status.value === "playing") {
+    pauseLoops();
+    status.value = "paused";
+  } else if (status.value === "paused") {
     status.value = "playing";
-    if (slug.value === "orbit-architect") { lastFrame = performance.now(); animationFrame = window.requestAnimationFrame(orbitFrame); }
-    else if (slug.value === "wordsmith") timer = window.setInterval(wordTick, 1000);
-    else if (slug.value === "pixel-punch") timer = window.setInterval(pixelTick, 100);
-    else if (slug.value === "last-light") timer = window.setInterval(lastLightTick, 100);
-    else if (slug.value === "color-switch") timer = window.setInterval(colorTick, 100);
-    else if (slug.value === "sky-hopper") { lastFrame = performance.now(); animationFrame = window.requestAnimationFrame(skyFrame); }
-    else if (slug.value === "cannon-stack") { lastFrame = performance.now(); animationFrame = window.requestAnimationFrame(cannonFrame); }
-    else if (slug.value === "fruit-slice") { lastFrame = performance.now(); animationFrame = window.requestAnimationFrame(fruitFrame); }
-    else if (slug.value === "maze-escape") timer = window.setInterval(mazeTick, 1000);
-    else if (funSpec.value) { /* 趣味题目没有后台动画，恢复后继续接受答题。 */ }
-    else if (kidsSpec.value) { if (kidsMode.value === "sequence" && kidsShowing.value) { pulseTimer = window.setTimeout(() => { kidsShowing.value = false; }, 1300); } }
-    else if (supportedSlugs.slice(13).includes(slug.value as GameSlug)) { lastFrame = performance.now(); animationFrame = window.requestAnimationFrame(newFrame); }
+    resumeGameLoop();
   }
 }
 function handleKeydown(event: KeyboardEvent): void {
